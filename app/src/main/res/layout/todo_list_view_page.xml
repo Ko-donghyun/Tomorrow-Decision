@@ -3,17 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:orientation="vertical">
 
-    <ViewFlipper
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/main_view_flipper">
-
-        <include layout="@layout/todo_list_view_page" />
-        <include layout="@layout/edit_item_page" />
-
-    </ViewFlipper>
-
+        android:id="@+id/todo_list_view">
+    </ListView>
 
 </LinearLayout>
