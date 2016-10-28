@@ -10,16 +10,40 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.5"
-        android:background="#ff1c1c">
+        android:background="#ff1c1c"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="5dp"
+            android:background="#00000000"
+            android:textColor="#000000"
+            android:id="@+id/cancel_button"
+            android:text="취소" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
             android:padding="5dp"
             android:textColor="#000000"
             android:text="로고 || 수정 페이지" />
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="5dp"
+            android:background="#00000000"
+            android:textColor="#000000"
+            android:id="@+id/done_button"
+            android:text="완료" />
 
     </LinearLayout>
 
@@ -47,6 +71,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:textColor="#000000"
+            android:id="@+id/todo_item"
             android:hint="직접 입력"/>
 
     </LinearLayout>
@@ -72,6 +97,7 @@
                 android:padding="5dp"
                 android:textColor="#000000"
                 android:background="#fff71c"
+                android:id="@+id/background_color_picker"
                 />
 
             <Button
@@ -84,6 +110,7 @@
                 android:padding="5dp"
                 android:textColor="#000000"
                 android:background="#fffb80"
+                android:id="@+id/text_color_picker"
                 />
         </LinearLayout>
 
