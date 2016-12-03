@@ -82,11 +82,14 @@ public class MainActivity extends AppCompatActivity {
     Button textColorPicker;
     String colorPickerSwitch = "text";
     String itemAddDialogSwitch = "memorize";
+    String itemDeleteDialogSwitch = "memorize";
 
     TextView memorizeArrange;
     TextView mustdoArrange;
 
     private ItemAddDialog itemAddDialog;
+    private ItemDeleteDialog itemDeleteDialog;
+    int deleteItemPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,7 +178,19 @@ public class MainActivity extends AppCompatActivity {
                 todo.setText(memorizeListViewAdapter.getItem(position).getTodo());
             }
         });
-
+        memorizeListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                itemDeleteDialogSwitch = "Memorize";
+                deleteItemPosition = position;
+                itemDeleteDialog = new ItemDeleteDialog(MainActivity.this,
+                        memorizeListViewAdapter.getItem(position).getId(),
+                        "'" + memorizeListViewAdapter.getItem(position).getTodo() + "'가 삭제 됩니다.",
+                        dialogDeleteCancelClickListener, dialogDeleteDoneClickListener);
+                itemDeleteDialog.show();
+                return false;
+            }
+        });
 
         // 리스트뷰 참조 및 Adapter달기
         mustDoListView.setAdapter(mustDoListViewAdapter);
@@ -183,6 +198,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 todo.setText(mustDoListViewAdapter.getItem(position).getTodo());
+            }
+        });
+        mustDoListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                itemDeleteDialogSwitch = "Must Do";
+                deleteItemPosition = position;
+                itemDeleteDialog = new ItemDeleteDialog(MainActivity.this,
+                        mustDoListViewAdapter.getItem(position).getId(),
+                        "'" + mustDoListViewAdapter.getItem(position).getTodo() + "'가 삭제 됩니다.",
+                        dialogDeleteCancelClickListener, dialogDeleteDoneClickListener);
+                itemDeleteDialog.show();
+                return false;
             }
         });
 
@@ -208,8 +236,6 @@ public class MainActivity extends AppCompatActivity {
                 textColorPicker.setBackgroundColor(Color.parseColor("#efefef"));
             }
         });
-
-
     }
 
     @Override
@@ -239,12 +265,15 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase sqLiteDatabase = memorizeDataBase.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM memorize", null);
 
-        cursor.moveToFirst();
-        do {
-            memorizeListViewAdapter.addItem(cursor.getInt(0), cursor.getString(1));
-        } while( cursor.moveToNext() );
+        if (cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            do {
+                memorizeListViewAdapter.addItem(cursor.getInt(0), cursor.getString(1));
+            } while (cursor.moveToNext());
 
-        cursor.close();
+            cursor.close();
+        }
+
         sqLiteDatabase.close();
     }
 
@@ -252,12 +281,14 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase sqLiteDatabase = mustDoDataBase.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM must_do", null);
 
-        cursor.moveToFirst();
-        do {
-            mustDoListViewAdapter.addItem(cursor.getInt(0), cursor.getString(1));
-        } while( cursor.moveToNext() );
+        if (cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            do {
+                mustDoListViewAdapter.addItem(cursor.getInt(0), cursor.getString(1));
+            } while (cursor.moveToNext());
 
-        cursor.close();
+            cursor.close();
+        }
         sqLiteDatabase.close();
     }
 
@@ -316,6 +347,18 @@ public class MainActivity extends AppCompatActivity {
         return id;
     }
 
+    private void deleteMemorizeItem(long id) {
+        SQLiteDatabase mustDoDatabase = memorizeDataBase.getWritableDatabase();
+        mustDoDatabase.delete("memorize", "_id=" + id, null);
+        mustDoDatabase.close();
+    }
+
+    private void deleteMustDoItem(long id) {
+        SQLiteDatabase mustDoDatabase = mustDoDataBase.getWritableDatabase();
+        mustDoDatabase.delete("must_do", "_id=" + id, null);
+        mustDoDatabase.close();
+    }
+
     Button.OnClickListener colorPickerListener = new View.OnClickListener() {
         public void onClick(View v) {
             int color = Color.TRANSPARENT;
@@ -335,8 +378,6 @@ public class MainActivity extends AppCompatActivity {
 
     private View.OnClickListener dialogCancelClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            String item = itemAddDialog.getItem();
-
             itemAddDialog.dismiss();
         }
     };
@@ -353,6 +394,28 @@ public class MainActivity extends AppCompatActivity {
                 mustDoListViewAdapter.notifyDataSetChanged();
             }
             itemAddDialog.dismiss();
+        }
+    };
+
+    private View.OnClickListener dialogDeleteCancelClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            itemDeleteDialog.dismiss();
+        }
+    };
+
+
+    private View.OnClickListener dialogDeleteDoneClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            if (itemDeleteDialogSwitch.equals("Memorize")) {
+                deleteMemorizeItem(itemDeleteDialog.getItemId());
+                memorizeListViewAdapter.removeItem(deleteItemPosition);
+                memorizeListViewAdapter.notifyDataSetChanged();
+            } else {
+                deleteMustDoItem(itemDeleteDialog.getItemId());
+                mustDoListViewAdapter.removeItem(deleteItemPosition);
+                mustDoListViewAdapter.notifyDataSetChanged();
+            }
+            itemDeleteDialog.dismiss();
         }
     };
 

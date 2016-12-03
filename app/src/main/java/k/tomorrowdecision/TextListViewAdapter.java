@@ -66,4 +66,8 @@ public class TextListViewAdapter extends BaseAdapter {
 
         listViewItemList.add(item);
     }
+
+    public void removeItem(int index) {
+        listViewItemList.remove(listViewItemList.get(index));
+    }
 }
