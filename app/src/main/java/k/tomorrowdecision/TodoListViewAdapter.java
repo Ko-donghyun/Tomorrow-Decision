@@ -47,14 +47,15 @@ public class TodoListViewAdapter extends BaseAdapter {
         TodoItem listViewItem = listViewItemList.get(position);
 
         // 아이템 내 각 위젯에 데이터 반영
-        time.setText(listViewItem.getTime().substring(12, 15));
+        time.setText(listViewItem.getTimeText().substring(12, 15));
+//        time.setText(listViewItem.getTime());
         todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
         todo.setText(listViewItem.getTodo());
         todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
         time.setTextSize(20);
         todo.setTextSize(28);
-        if (listViewItem.getTime().equals("12월 09일 (금) 13시")) {
-            time.setText(listViewItem.getTime());
+        if (position == 24) {
+            time.setText(listViewItem.getTimeText());
             time.setTextSize(20);
             todo.setTextSize(60);
         }
@@ -65,24 +66,32 @@ public class TodoListViewAdapter extends BaseAdapter {
     // 지정한 위치(position)에 있는 데이터와 관계된 아이템(row)의 ID를 리턴 : 필수 구현
     @Override
     public long getItemId(int position) {
-        return position ;
+        return position;
     }
 
     // 지정한 위치(position)에 있는 데이터 리턴 : 필수 구현
     @Override
-    public Object getItem(int position) {
-        return listViewItemList.get(position) ;
+    public TodoItem getItem(int position) {
+        return listViewItemList.get(position);
     }
 
     // 아이템 데이터 추가를 위한 함수
-    public void addItem(String time, String todo, String textColorCode, String backgroundColorCode) {
+    public void addItem(String time, String timeText, String todo, String textColorCode, String backgroundColorCode) {
         TodoItem item = new TodoItem();
 
         item.setTime(time);
+        item.setTimeText(timeText);
         item.setTodo(todo);
         item.setTextColorCode(textColorCode);
         item.setBackgroundColorCode(backgroundColorCode);
 
         listViewItemList.add(item);
+    }
+
+    // 아이템 데이터 업데이트를 위한 함수
+    public void updateItem(int index, String todo, String textColorCode, String backgroundColorCode) {
+        listViewItemList.get(index).setTodo(todo);
+        listViewItemList.get(index).setTextColorCode(textColorCode);
+        listViewItemList.get(index).setBackgroundColorCode(backgroundColorCode);
     }
 }
