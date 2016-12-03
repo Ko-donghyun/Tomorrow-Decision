@@ -89,6 +89,11 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().setStatusBarColor(Color.BLACK);
         }
+        // 데이터 베이스 가져오기
+        todoDataBase = new TodoDataBase(this, todoDBName, null, todoDBVersion);
+        memorizeDataBase = new MemorizeDataBase(this, memorizeDBName, null, memorizeDBVersion);
+        mustDoDataBase = new MustDoDataBase(this, mustDoDBName, null, mustDoDBVersion);
+
 
         todoListView = (ListView) findViewById(R.id.todo_list_view);
         memorizeListView = (ListView) findViewById(R.id.memorize_list_view);
@@ -98,41 +103,15 @@ public class MainActivity extends AppCompatActivity {
         mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.push_left_out));
 
         // Adapter 생성
-        todoListViewAdapter = new TodoListViewAdapter() ;
+        todoListViewAdapter = new TodoListViewAdapter();
+        getTodoData();
+        memorizeListViewAdapter = new TextListViewAdapter();
+        getMemorizeData();
+        mustDoListViewAdapter = new TextListViewAdapter();
+        getMustDoData();
 
         // 리스트뷰 참조 및 Adapter달기
         todoListView.setAdapter(todoListViewAdapter);
-
-        // 첫 번째 아이템 추가.
-
-        todoListViewAdapter.addItem("12월 09일 (금) 07시", "몇 글자 까지 가능한지를 판단하자", "#FFf0f0", "#FF4F6F") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#F20f00", "#FFFF2F") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 09시", "점심 식사", "#FF0000", "#3FFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 10시", "1234567890", "#2F0080", "#6FFF3F") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 11시", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "#110030", "#4F3FFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 12시", "아야어여오요우유으이키티칲피미니이리히비지디기시", "#220100", "#FFF4FF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 13시", "가나다라마바사아자차카타파하", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 15시", "가나다라마바사아자차카타파하", "#00403F", "#FF1F1F") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 16시", "일과 시작", "#0AA0FF", "#5FFF3F") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 17시", "일과 시작", "#02E0FF", "#3F44FF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 18시", "일과 시작", "#0440FF", "#4F4F8F") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 19시", "일과 시작", "#4030FF", "#FF5F6F") ;
-
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 13시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-        todoListViewAdapter.addItem("12월 09일 (금) 08시", "점심 식사", "#000000", "#FFFFFF") ;
-
         todoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -141,5 +120,65 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         todoListView.setSelection(4);
+
+        // 리스트뷰 참조 및 Adapter달기
+        memorizeListView.setAdapter(memorizeListViewAdapter);
+        memorizeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                todo.setText(memorizeListViewAdapter.getItem(position).getTodo());
+            }
+        });
+
+
+        // 리스트뷰 참조 및 Adapter달기
+        mustDoListView.setAdapter(mustDoListViewAdapter);
+        mustDoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                todo.setText(mustDoListViewAdapter.getItem(position).getTodo());
+            }
+        });
+
+    private void getTodoData() {
+        SQLiteDatabase sqLiteDatabase = todoDataBase.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM todo", null);
+
+        cursor.moveToFirst();
+        do {
+            Date data = new Date(Long.parseLong(cursor.getString(0)));
+            String stringDate = simpleDateFormat.format(data);
+            todoListViewAdapter.addItem(cursor.getString(0), stringDate, cursor.getString(1), cursor.getString(2), cursor.getString(3));
+        } while( cursor.moveToNext() );
+
+        cursor.close();
+        sqLiteDatabase.close();
+    }
+
+    private void getMemorizeData() {
+        SQLiteDatabase sqLiteDatabase = memorizeDataBase.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM memorize", null);
+
+        cursor.moveToFirst();
+        do {
+            memorizeListViewAdapter.addItem(cursor.getInt(0), cursor.getString(1));
+        } while( cursor.moveToNext() );
+
+        cursor.close();
+        sqLiteDatabase.close();
+    }
+
+    private void getMustDoData() {
+        SQLiteDatabase sqLiteDatabase = mustDoDataBase.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM must_do", null);
+
+        cursor.moveToFirst();
+        do {
+            mustDoListViewAdapter.addItem(cursor.getInt(0), cursor.getString(1));
+        } while( cursor.moveToNext() );
+
+        cursor.close();
+        sqLiteDatabase.close();
+    }
     }
 }
