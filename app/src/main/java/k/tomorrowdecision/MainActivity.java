@@ -89,11 +89,34 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().setStatusBarColor(Color.BLACK);
         }
+        imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+
         // 데이터 베이스 가져오기
         todoDataBase = new TodoDataBase(this, todoDBName, null, todoDBVersion);
         memorizeDataBase = new MemorizeDataBase(this, memorizeDBName, null, memorizeDBVersion);
         mustDoDataBase = new MustDoDataBase(this, mustDoDBName, null, mustDoDBVersion);
 
+        cancelButton = (Button) findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickFlag = false;
+                mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
+                mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
+                mainViewFlipper.showPrevious();
+                clickFlag = true;
+            }
+        });
+
+        doneButton = (Button) findViewById(R.id.done_button);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickFlag = false;
+                saveTodo(itemPosition);
+                clickFlag = true;
+            }
+        });
 
         todoListView = (ListView) findViewById(R.id.todo_list_view);
         memorizeListView = (ListView) findViewById(R.id.memorize_list_view);
@@ -110,16 +133,28 @@ public class MainActivity extends AppCompatActivity {
         mustDoListViewAdapter = new TextListViewAdapter();
         getMustDoData();
 
+        todoTime = (TextView) findViewById(R.id.todo_time);
+        todo = (EditText) findViewById(R.id.todo_item);
+        todoBackground = (LinearLayout) findViewById(R.id.todo_background);
+
         // 리스트뷰 참조 및 Adapter달기
         todoListView.setAdapter(todoListViewAdapter);
         todoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Get Item
+                todoTime.setText(todoListViewAdapter.getItem(position).getTimeText());
+                todoBackground.setBackgroundColor(Color.parseColor(todoListViewAdapter.getItem(position).getBackgroundColorCode()));
+                todo.setText(todoListViewAdapter.getItem(position).getTodo());
+                todo.setTextColor(Color.parseColor(todoListViewAdapter.getItem(position).getTextColorCode()));
+                timeText = todoListViewAdapter.getItem(position).getTime();
+                itemPosition = position;
+
+                mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_in));
+                mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_out));
                 mainViewFlipper.showNext();
             }
         });
-        todoListView.setSelection(4);
+        todoListView.setSelection(21);
 
         // 리스트뷰 참조 및 Adapter달기
         memorizeListView.setAdapter(memorizeListViewAdapter);
@@ -140,6 +175,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        for (int i = 0; i < 9; i++) {
+            findViewById(buttonArray[i]).setOnClickListener(colorPickerListener);
+        }
+        backgroundColorPicker = (Button) findViewById(R.id.background_color_picker);
+        backgroundColorPicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                colorPickerSwitch = "background";
+            }
+        });
+        textColorPicker = (Button) findViewById(R.id.text_color_picker);
+        textColorPicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                colorPickerSwitch = "text";
+            }
+        });
+    }
     private void getTodoData() {
         SQLiteDatabase sqLiteDatabase = todoDataBase.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM todo", null);
@@ -180,5 +234,86 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
         sqLiteDatabase.close();
     }
+
+    private void saveTodo(int itemPosition) {
+        SQLiteDatabase todoDatabase = todoDataBase.getWritableDatabase();
+
+        int backgroundColor = Color.TRANSPARENT;
+        Drawable background = todoBackground.getBackground();
+        if (background instanceof ColorDrawable)
+            backgroundColor = ((ColorDrawable) background).getColor();
+
+        String backgroundHexCode = String.format("#%06X", (0xFFFFFF & backgroundColor));
+        String textHexCode = String.format("#%06X", (0xFFFFFF & todo.getCurrentTextColor()));
+
+        ContentValues values = new ContentValues();
+
+        values.put("todo", todo.getText().toString());
+        values.put("textColorCode", textHexCode);
+        values.put("backgroundColorCode", backgroundHexCode);
+        todoDatabase.update("todo", values, "time='" + timeText + "'", null);
+
+        todoDatabase.close();
+
+        todoListViewAdapter.updateItem(itemPosition, todo.getText().toString(), textHexCode, backgroundHexCode);
+        todoListViewAdapter.notifyDataSetChanged();
+        hideKeyboard();
+
+        mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
+        mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
+        mainViewFlipper.showPrevious();
+    }
+
+    Button.OnClickListener colorPickerListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            int color = Color.TRANSPARENT;
+            Drawable background = v.getBackground();
+            if (background instanceof ColorDrawable)
+                color = ((ColorDrawable) background).getColor();
+
+            String stringColor = String.format("#%06X", (0xFFFFFF & color));
+
+            if (colorPickerSwitch.equals("text")) {
+                todo.setTextColor(color);
+            } else {
+                todoBackground.setBackgroundColor(color);
+            }
+        }
+    };
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            //하드웨어 뒤로가기 버튼에 따른 이벤트 설정
+            case KeyEvent.KEYCODE_BACK:
+                if (mainViewFlipper.getDisplayedChild() == 1) {
+                    mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
+                    mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
+                    mainViewFlipper.showPrevious();
+                } else {
+                    long tempTime = System.currentTimeMillis();
+                    long intervalTime = tempTime - backPressedTime;
+
+                    if ( 0 <= intervalTime && FINISH_INTERVAL_TIME >= intervalTime ) {
+                        super.onBackPressed();
+                    }
+                    else {
+                        backPressedTime = tempTime;
+                        Toast.makeText(MainActivity.this, "'뒤로' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    private void hideKeyboard() {
+        imm.hideSoftInputFromWindow(todo.getWindowToken(), 0);
+    }
+
+    private void showKeyboard() {
+        imm.showSoftInput(todo, 0);
     }
 }
