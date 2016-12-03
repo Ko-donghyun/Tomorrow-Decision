@@ -195,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 colorPickerSwitch = "background";
+                backgroundColorPicker.setBackgroundColor(Color.parseColor("#efefef"));
+                textColorPicker.setBackgroundColor(Color.parseColor("#FFFFFF"));
             }
         });
         textColorPicker = (Button) findViewById(R.id.text_color_picker);
@@ -202,8 +204,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 colorPickerSwitch = "text";
+                backgroundColorPicker.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                textColorPicker.setBackgroundColor(Color.parseColor("#efefef"));
             }
         });
+
+
     }
 
     @Override

@@ -7,6 +7,13 @@
     android:background="#ffffff"
     android:id="@+id/item_layout">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:orientation="vertical"
+        android:layout_weight="0"
+        android:background="#dcdcdc"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,6 +36,6 @@
         android:textColor="#000000"
         android:id="@+id/todo_item"
         android:textSize="24dp"
-        android:text="todo Contenct"/>
+        android:text="길이 제한을 딱히 할 필요없이 그냥 가운데 정렬만"/>
 
 </LinearLayout>
