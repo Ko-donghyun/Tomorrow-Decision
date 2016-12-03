@@ -10,6 +10,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
+import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 public class Loading extends Activity {
 
@@ -134,5 +137,10 @@ public class Loading extends Activity {
         }
 
         todoDatabase.close();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return true;
     }
 }
