@@ -14,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -54,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
     TextListViewAdapter mustDoListViewAdapter;
     TextListViewAdapter memorizeListViewAdapter;
 
-    String setTextColor = "#000000";
-    String setBackgroundColor = "#FFFFFF";
     String timeText = "";
     int itemPosition;
 
@@ -81,6 +81,12 @@ public class MainActivity extends AppCompatActivity {
     Button backgroundColorPicker;
     Button textColorPicker;
     String colorPickerSwitch = "text";
+    String itemAddDialogSwitch = "memorize";
+
+    TextView memorizeArrange;
+    TextView mustdoArrange;
+
+    private ItemAddDialog itemAddDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clickFlag = false;
+                hideKeyboard(todo);
                 mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
                 mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
                 mainViewFlipper.showPrevious();
@@ -136,6 +143,10 @@ public class MainActivity extends AppCompatActivity {
         todoTime = (TextView) findViewById(R.id.todo_time);
         todo = (EditText) findViewById(R.id.todo_item);
         todoBackground = (LinearLayout) findViewById(R.id.todo_background);
+        memorizeArrange = (TextView) findViewById(R.id.memorize_arrange);
+        memorizeArrange.setOnClickListener(itemAddClickListener);
+        mustdoArrange = (TextView) findViewById(R.id.mustdo_arrange);
+        mustdoArrange.setOnClickListener(itemAddClickListener);
 
         // 리스트뷰 참조 및 Adapter달기
         todoListView.setAdapter(todoListViewAdapter);
@@ -266,11 +277,37 @@ public class MainActivity extends AppCompatActivity {
 
         todoListViewAdapter.updateItem(itemPosition, todo.getText().toString(), textHexCode, backgroundHexCode);
         todoListViewAdapter.notifyDataSetChanged();
-        hideKeyboard();
+        hideKeyboard(todo);
 
         mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
         mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
         mainViewFlipper.showPrevious();
+    }
+
+    private long saveMemorizeItem(String todo) {
+        SQLiteDatabase memorizeDatabase = memorizeDataBase.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("todo", todo);
+        long id = memorizeDatabase.insert("memorize", null, values);
+
+        memorizeDatabase.close();
+
+        return id;
+    }
+
+    private long saveMustDoItem(String todo) {
+        SQLiteDatabase mustDoDatabase = mustDoDataBase.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("todo", todo);
+        long id = mustDoDatabase.insert("must_do", null, values);
+
+        mustDoDatabase.close();
+
+        return id;
     }
 
     Button.OnClickListener colorPickerListener = new View.OnClickListener() {
@@ -287,6 +324,50 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 todoBackground.setBackgroundColor(color);
             }
+        }
+    };
+
+    private View.OnClickListener dialogCancelClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            String item = itemAddDialog.getItem();
+
+            itemAddDialog.dismiss();
+        }
+    };
+
+    private View.OnClickListener dialogDoneClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            if (itemAddDialogSwitch.equals("Memorize")) {
+                long id = saveMemorizeItem(itemAddDialog.getItem().toString());
+                memorizeListViewAdapter.addItem(id, itemAddDialog.getItem().toString());
+                memorizeListViewAdapter.notifyDataSetChanged();
+            } else {
+                long id = saveMustDoItem(itemAddDialog.getItem().toString());
+                mustDoListViewAdapter.addItem(id, itemAddDialog.getItem().toString());
+                mustDoListViewAdapter.notifyDataSetChanged();
+            }
+            itemAddDialog.dismiss();
+        }
+    };
+
+    TextView.OnClickListener itemAddClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            String title = "";
+            String subTitle = "";
+                switch (v.getId()) {
+                case R.id.memorize_arrange:
+                    title = "Memorize";
+                    subTitle = "주기적으로 하는 일에 대해서 추가하세요";
+                    break;
+                case R.id.mustdo_arrange:
+                    title = "Must Do";
+                    subTitle = "꼭 해야만 하는 일에 대해서 추가하세요";
+                    break;
+            }
+            itemAddDialogSwitch = title;
+            itemAddDialog = new ItemAddDialog(MainActivity.this, title, subTitle, dialogCancelClickListener, dialogDoneClickListener);
+            itemAddDialog.show();
+            itemAddDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     };
 
@@ -318,11 +399,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void hideKeyboard() {
-        imm.hideSoftInputFromWindow(todo.getWindowToken(), 0);
+    private void hideKeyboard(View view) {
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void showKeyboard() {
-        imm.showSoftInput(todo, 0);
+    private void showKeyboard(View view) {
+        imm.showSoftInput(view, 0);
     }
 }
