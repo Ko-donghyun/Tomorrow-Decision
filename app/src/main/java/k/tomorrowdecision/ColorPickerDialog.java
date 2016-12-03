@@ -11,6 +11,7 @@ import android.widget.Button;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.larswerkman.holocolorpicker.SVBar;
 import com.larswerkman.holocolorpicker.SaturationBar;
+import com.larswerkman.holocolorpicker.ValueBar;
 
 public class ColorPickerDialog extends Dialog {
 
@@ -34,9 +35,11 @@ public class ColorPickerDialog extends Dialog {
         picker = (ColorPicker) findViewById(R.id.picker);
         SVBar svBar = (SVBar) findViewById(R.id.svbar);
         SaturationBar saturationBar = (SaturationBar) findViewById(R.id.saturationbar);
+        ValueBar valueBar = (ValueBar) findViewById(R.id.valuebar);
 
         picker.addSVBar(svBar);
         picker.addSaturationBar(saturationBar);
+        picker.addValueBar(valueBar);
         picker.setShowOldCenterColor(false);
 
         Button cancelButton = (Button) findViewById(R.id.dialog_color_picker_cancel);
