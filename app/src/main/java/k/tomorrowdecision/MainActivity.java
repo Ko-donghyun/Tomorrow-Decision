@@ -14,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -54,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
     TextListViewAdapter mustDoListViewAdapter;
     TextListViewAdapter memorizeListViewAdapter;
 
-    String setTextColor = "#000000";
-    String setBackgroundColor = "#FFFFFF";
     String timeText = "";
     int itemPosition;
 
@@ -81,6 +81,15 @@ public class MainActivity extends AppCompatActivity {
     Button backgroundColorPicker;
     Button textColorPicker;
     String colorPickerSwitch = "text";
+    String itemAddDialogSwitch = "memorize";
+    String itemDeleteDialogSwitch = "memorize";
+
+    TextView memorizeArrange;
+    TextView mustdoArrange;
+
+    private ItemAddDialog itemAddDialog;
+    private ItemDeleteDialog itemDeleteDialog;
+    int deleteItemPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clickFlag = false;
+                hideKeyboard(todo);
                 mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
                 mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
                 mainViewFlipper.showPrevious();
@@ -136,6 +146,10 @@ public class MainActivity extends AppCompatActivity {
         todoTime = (TextView) findViewById(R.id.todo_time);
         todo = (EditText) findViewById(R.id.todo_item);
         todoBackground = (LinearLayout) findViewById(R.id.todo_background);
+        memorizeArrange = (TextView) findViewById(R.id.memorize_arrange);
+        memorizeArrange.setOnClickListener(itemAddClickListener);
+        mustdoArrange = (TextView) findViewById(R.id.mustdo_arrange);
+        mustdoArrange.setOnClickListener(itemAddClickListener);
 
         // 리스트뷰 참조 및 Adapter달기
         todoListView.setAdapter(todoListViewAdapter);
@@ -164,7 +178,19 @@ public class MainActivity extends AppCompatActivity {
                 todo.setText(memorizeListViewAdapter.getItem(position).getTodo());
             }
         });
-
+        memorizeListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                itemDeleteDialogSwitch = "Memorize";
+                deleteItemPosition = position;
+                itemDeleteDialog = new ItemDeleteDialog(MainActivity.this,
+                        memorizeListViewAdapter.getItem(position).getId(),
+                        "'" + memorizeListViewAdapter.getItem(position).getTodo() + "'가 삭제 됩니다.",
+                        dialogDeleteCancelClickListener, dialogDeleteDoneClickListener);
+                itemDeleteDialog.show();
+                return false;
+            }
+        });
 
         // 리스트뷰 참조 및 Adapter달기
         mustDoListView.setAdapter(mustDoListViewAdapter);
@@ -172,6 +198,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 todo.setText(mustDoListViewAdapter.getItem(position).getTodo());
+            }
+        });
+        mustDoListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                itemDeleteDialogSwitch = "Must Do";
+                deleteItemPosition = position;
+                itemDeleteDialog = new ItemDeleteDialog(MainActivity.this,
+                        mustDoListViewAdapter.getItem(position).getId(),
+                        "'" + mustDoListViewAdapter.getItem(position).getTodo() + "'가 삭제 됩니다.",
+                        dialogDeleteCancelClickListener, dialogDeleteDoneClickListener);
+                itemDeleteDialog.show();
+                return false;
             }
         });
 
@@ -184,6 +223,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 colorPickerSwitch = "background";
+                backgroundColorPicker.setBackgroundColor(Color.parseColor("#efefef"));
+                textColorPicker.setBackgroundColor(Color.parseColor("#FFFFFF"));
             }
         });
         textColorPicker = (Button) findViewById(R.id.text_color_picker);
@@ -191,6 +232,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 colorPickerSwitch = "text";
+                backgroundColorPicker.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                textColorPicker.setBackgroundColor(Color.parseColor("#efefef"));
             }
         });
     }
@@ -222,12 +265,15 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase sqLiteDatabase = memorizeDataBase.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM memorize", null);
 
-        cursor.moveToFirst();
-        do {
-            memorizeListViewAdapter.addItem(cursor.getInt(0), cursor.getString(1));
-        } while( cursor.moveToNext() );
+        if (cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            do {
+                memorizeListViewAdapter.addItem(cursor.getInt(0), cursor.getString(1));
+            } while (cursor.moveToNext());
 
-        cursor.close();
+            cursor.close();
+        }
+
         sqLiteDatabase.close();
     }
 
@@ -235,12 +281,14 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase sqLiteDatabase = mustDoDataBase.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM must_do", null);
 
-        cursor.moveToFirst();
-        do {
-            mustDoListViewAdapter.addItem(cursor.getInt(0), cursor.getString(1));
-        } while( cursor.moveToNext() );
+        if (cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            do {
+                mustDoListViewAdapter.addItem(cursor.getInt(0), cursor.getString(1));
+            } while (cursor.moveToNext());
 
-        cursor.close();
+            cursor.close();
+        }
         sqLiteDatabase.close();
     }
 
@@ -266,11 +314,49 @@ public class MainActivity extends AppCompatActivity {
 
         todoListViewAdapter.updateItem(itemPosition, todo.getText().toString(), textHexCode, backgroundHexCode);
         todoListViewAdapter.notifyDataSetChanged();
-        hideKeyboard();
+        hideKeyboard(todo);
 
         mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
         mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
         mainViewFlipper.showPrevious();
+    }
+
+    private long saveMemorizeItem(String todo) {
+        SQLiteDatabase memorizeDatabase = memorizeDataBase.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("todo", todo);
+        long id = memorizeDatabase.insert("memorize", null, values);
+
+        memorizeDatabase.close();
+
+        return id;
+    }
+
+    private long saveMustDoItem(String todo) {
+        SQLiteDatabase mustDoDatabase = mustDoDataBase.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("todo", todo);
+        long id = mustDoDatabase.insert("must_do", null, values);
+
+        mustDoDatabase.close();
+
+        return id;
+    }
+
+    private void deleteMemorizeItem(long id) {
+        SQLiteDatabase mustDoDatabase = memorizeDataBase.getWritableDatabase();
+        mustDoDatabase.delete("memorize", "_id=" + id, null);
+        mustDoDatabase.close();
+    }
+
+    private void deleteMustDoItem(long id) {
+        SQLiteDatabase mustDoDatabase = mustDoDataBase.getWritableDatabase();
+        mustDoDatabase.delete("must_do", "_id=" + id, null);
+        mustDoDatabase.close();
     }
 
     Button.OnClickListener colorPickerListener = new View.OnClickListener() {
@@ -287,6 +373,70 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 todoBackground.setBackgroundColor(color);
             }
+        }
+    };
+
+    private View.OnClickListener dialogCancelClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            itemAddDialog.dismiss();
+        }
+    };
+
+    private View.OnClickListener dialogDoneClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            if (itemAddDialogSwitch.equals("Memorize")) {
+                long id = saveMemorizeItem(itemAddDialog.getItem().toString());
+                memorizeListViewAdapter.addItem(id, itemAddDialog.getItem().toString());
+                memorizeListViewAdapter.notifyDataSetChanged();
+            } else {
+                long id = saveMustDoItem(itemAddDialog.getItem().toString());
+                mustDoListViewAdapter.addItem(id, itemAddDialog.getItem().toString());
+                mustDoListViewAdapter.notifyDataSetChanged();
+            }
+            itemAddDialog.dismiss();
+        }
+    };
+
+    private View.OnClickListener dialogDeleteCancelClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            itemDeleteDialog.dismiss();
+        }
+    };
+
+
+    private View.OnClickListener dialogDeleteDoneClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            if (itemDeleteDialogSwitch.equals("Memorize")) {
+                deleteMemorizeItem(itemDeleteDialog.getItemId());
+                memorizeListViewAdapter.removeItem(deleteItemPosition);
+                memorizeListViewAdapter.notifyDataSetChanged();
+            } else {
+                deleteMustDoItem(itemDeleteDialog.getItemId());
+                mustDoListViewAdapter.removeItem(deleteItemPosition);
+                mustDoListViewAdapter.notifyDataSetChanged();
+            }
+            itemDeleteDialog.dismiss();
+        }
+    };
+
+    TextView.OnClickListener itemAddClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            String title = "";
+            String subTitle = "";
+                switch (v.getId()) {
+                case R.id.memorize_arrange:
+                    title = "Memorize";
+                    subTitle = "주기적으로 하는 일에 대해서 추가하세요";
+                    break;
+                case R.id.mustdo_arrange:
+                    title = "Must Do";
+                    subTitle = "꼭 해야만 하는 일에 대해서 추가하세요";
+                    break;
+            }
+            itemAddDialogSwitch = title;
+            itemAddDialog = new ItemAddDialog(MainActivity.this, title, subTitle, dialogCancelClickListener, dialogDoneClickListener);
+            itemAddDialog.show();
+            itemAddDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     };
 
@@ -318,11 +468,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void hideKeyboard() {
-        imm.hideSoftInputFromWindow(todo.getWindowToken(), 0);
+    private void hideKeyboard(View view) {
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void showKeyboard() {
-        imm.showSoftInput(todo, 0);
+    private void showKeyboard(View view) {
+        imm.showSoftInput(view, 0);
     }
 }

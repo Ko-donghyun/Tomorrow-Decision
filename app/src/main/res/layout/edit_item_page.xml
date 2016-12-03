@@ -3,14 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="10">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5"
-        android:background="#ff1c1c"
+        android:layout_height="40dp"
+        android:background="#ffffff"
         android:orientation="horizontal">
 
         <Button
@@ -18,8 +16,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:padding="5dp"
-            android:background="#00000000"
+            android:padding="2dp"
+            android:background="#efefef"
             android:textColor="#000000"
             android:id="@+id/cancel_button"
             android:text="취소" />
@@ -32,15 +30,16 @@
             android:gravity="center"
             android:padding="5dp"
             android:textColor="#000000"
-            android:text="로고 || 수정 페이지" />
+            android:textSize="20dp"
+            android:text="내일 내일" />
 
         <Button
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:padding="5dp"
-            android:background="#00000000"
+            android:padding="2dp"
+            android:background="#efefef"
             android:textColor="#000000"
             android:id="@+id/done_button"
             android:text="완료" />
@@ -49,10 +48,16 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_height="1dp"
         android:orientation="vertical"
-        android:background="#ffb01c">
+        android:background="#dcdcdc"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="vertical"
+        android:background="#ffffff"
+        android:id="@+id/todo_background">
 
         <TextView
             android:layout_width="match_parent"
@@ -61,25 +66,41 @@
             android:padding="5dp"
             android:textColor="#000000"
             android:text="12월 09일 (금) 19시"
+            android:id="@+id/todo_time"
             />
 
-        <EditText
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:textColor="#000000"
-            android:id="@+id/todo_item"
-            android:hint="직접 입력"/>
+            android:layout_height="match_parent">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textColor="#000000"
+                android:textColorHint="#999999"
+                android:id="@+id/todo_item"
+                android:background="@android:color/transparent"
+                android:hint="직접 입력"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.5"
+        android:layout_height="1dp"
+        android:orientation="vertical"
+        android:layout_weight="0"
+        android:background="#dcdcdc"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
         android:orientation="vertical">
 
         <LinearLayout
@@ -90,27 +111,27 @@
             <Button
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="배경 색상 선택"
-                android:padding="5dp"
-                android:textColor="#000000"
-                android:background="#fff71c"
-                android:id="@+id/background_color_picker"
-                />
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="글자 색상 선택"
                 android:padding="5dp"
                 android:textColor="#000000"
-                android:background="#fffb80"
+                android:background="#efefef"
                 android:id="@+id/text_color_picker"
+                />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="배경 색상 선택"
+                android:padding="5dp"
+                android:textColor="#000000"
+                android:background="#ffffff"
+                android:id="@+id/background_color_picker"
                 />
         </LinearLayout>
 
@@ -119,7 +140,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="horizontal"
-            android:background="#FFFFFF">
+            android:background="#efefef">
 
             <Button
                 android:layout_width="30dp"
@@ -199,6 +220,13 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:orientation="vertical"
+        android:layout_weight="0"
+        android:background="#ededed"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="6"
         android:weightSum="2"
@@ -213,24 +241,47 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:background="#37ff29">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="+"
+                    android:textSize="20dp"
+                    android:padding="5dp"
+                    android:textColor="#37ff29"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="Memorize"
+                    android:textSize="20dp"
                     android:padding="5dp"
                     android:textColor="#000000"
                     />
 
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="+"
+                    android:textSize="20dp"
+                    android:padding="5dp"
+                    android:textColor="#000000"
+                    android:id="@+id/memorize_arrange"
+                    />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#14700e">
+                android:background="#ffffff">
 
                 <ListView
                     android:layout_width="match_parent"
@@ -240,6 +291,13 @@
 
             </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="0"
+            android:background="#dcdcdc"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -255,13 +313,36 @@
                 android:background="#29e6ff">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="20dp"
+                    android:text="+"
+                    android:padding="5dp"
+                    android:textColor="#29e6ff"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:gravity="center"
+                    android:textSize="20dp"
                     android:text="Must Do"
                     android:padding="5dp"
                     android:textColor="#000000"
+                    />
+
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="+"
+                    android:textSize="20dp"
+                    android:padding="5dp"
+                    android:textColor="#000000"
+                    android:id="@+id/mustdo_arrange"
                     />
 
             </LinearLayout>
@@ -269,7 +350,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#0c464e">
+                android:background="#ffffff">
 
                 <ListView
                     android:layout_width="match_parent"

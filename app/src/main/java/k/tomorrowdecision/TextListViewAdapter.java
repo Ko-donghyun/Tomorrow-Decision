@@ -58,12 +58,16 @@ public class TextListViewAdapter extends BaseAdapter {
     }
 
     // 아이템 데이터 추가를 위한 함수
-    public void addItem(int id, String todo) {
+    public void addItem(long id, String todo) {
         TextItem item = new TextItem();
 
         item.setId(id);
         item.setTodo(todo);
 
         listViewItemList.add(item);
+    }
+
+    public void removeItem(int index) {
+        listViewItemList.remove(listViewItemList.get(index));
     }
 }
