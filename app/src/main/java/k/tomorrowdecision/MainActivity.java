@@ -1,8 +1,10 @@
 package k.tomorrowdecision;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -77,6 +79,13 @@ public class MainActivity extends AppCompatActivity {
       R.id.color_picker_04, R.id.color_picker_05, R.id.color_picker_06,
       R.id.color_picker_07, R.id.color_picker_08, R.id.color_picker_09,
     };
+    String[] colorCodeArray = {
+            "#ff0000", "#ff9900", "#ffe600", "#3cff00", "#00ffe1", "#0011ff", "#6600ff", "#fb00ff", "#000000"
+    };
+    public static SharedPreferences[] colorPickerPreferences = new SharedPreferences[9];
+    public static SharedPreferences.Editor[] colorPickerEditors = new SharedPreferences.Editor[9];
+    Button colorButtons[] = new Button[9];
+    int buttonIndex;
 
     Button backgroundColorPicker;
     Button textColorPicker;
@@ -90,6 +99,10 @@ public class MainActivity extends AppCompatActivity {
     private ItemAddDialog itemAddDialog;
     private ItemDeleteDialog itemDeleteDialog;
     int deleteItemPosition;
+
+    private ColorPickerDialog colorPickerDialog;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,8 +229,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         for (int i = 0; i < 9; i++) {
-            findViewById(buttonArray[i]).setOnClickListener(colorPickerListener);
+            colorButtons[i] = (Button) findViewById(buttonArray[i]);
+            colorButtons[i].setOnClickListener(colorPickerListener);
+            colorButtons[i].setOnLongClickListener(changeColorPickerListener);
+            colorPickerPreferences[i] = getSharedPreferences("color_" + Integer.toString(i), Activity.MODE_PRIVATE);
+            colorButtons[i].setBackgroundColor(Color.parseColor(colorPickerPreferences[i].getString("color_" + Integer.toString(i), colorCodeArray[i])));
         }
+
         backgroundColorPicker = (Button) findViewById(R.id.background_color_picker);
         backgroundColorPicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -376,6 +394,23 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    Button.OnLongClickListener changeColorPickerListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            int viewId = v.getId();
+            for (int i = 0; i < 9; i++) {
+                if (viewId == buttonArray[i]) {
+                    Log.d("aa", Integer.toString(i));
+                    buttonIndex = i;
+                    break;
+                }
+            }
+            colorPickerDialog = new ColorPickerDialog(MainActivity.this, dialogColorPickerCancelClickListener, dialogColorPickerDoneClickListener);
+            colorPickerDialog.show();
+            return false;
+        }
+    };
+
     private View.OnClickListener dialogCancelClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             itemAddDialog.dismiss();
@@ -416,6 +451,26 @@ public class MainActivity extends AppCompatActivity {
                 mustDoListViewAdapter.notifyDataSetChanged();
             }
             itemDeleteDialog.dismiss();
+        }
+    };
+
+    private View.OnClickListener dialogColorPickerCancelClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            colorPickerDialog.dismiss();
+        }
+    };
+
+    private View.OnClickListener dialogColorPickerDoneClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            int color = colorPickerDialog.getColor();
+            String stringColor = String.format("#%06X", (0xFFFFFF & color));
+
+            colorButtons[buttonIndex].setBackgroundColor(Color.parseColor(stringColor));
+
+            colorPickerEditors[buttonIndex] = colorPickerPreferences[buttonIndex].edit();
+            colorPickerEditors[buttonIndex].putString("color_" + Integer.toString(buttonIndex), stringColor);
+            colorPickerEditors[buttonIndex].apply();
+            colorPickerDialog.dismiss();
         }
     };
 
