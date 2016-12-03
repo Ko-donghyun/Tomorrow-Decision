@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                 deleteItemPosition = position;
                 itemDeleteDialog = new ItemDeleteDialog(MainActivity.this,
                         memorizeListViewAdapter.getItem(position).getId(),
-                        "'" + memorizeListViewAdapter.getItem(position).getTodo() + "'가 삭제 됩니다.",
+                        "'" + memorizeListViewAdapter.getItem(position).getTodo() + "'이(가) 삭제 됩니다.",
                         dialogDeleteCancelClickListener, dialogDeleteDoneClickListener);
                 itemDeleteDialog.show();
                 return false;
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
                 deleteItemPosition = position;
                 itemDeleteDialog = new ItemDeleteDialog(MainActivity.this,
                         mustDoListViewAdapter.getItem(position).getId(),
-                        "'" + mustDoListViewAdapter.getItem(position).getTodo() + "'가 삭제 됩니다.",
+                        "'" + mustDoListViewAdapter.getItem(position).getTodo() + "'이(가) 삭제 됩니다.",
                         dialogDeleteCancelClickListener, dialogDeleteDoneClickListener);
                 itemDeleteDialog.show();
                 return false;
