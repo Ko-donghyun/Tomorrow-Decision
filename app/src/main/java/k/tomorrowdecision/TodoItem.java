@@ -1,19 +1,11 @@
 package k.tomorrowdecision;
 
 public class TodoItem {
-    private int id;
     private String time;
+    private String timeText;
     private String todo;
     private String textColorCode;
     private String backgroundColorCode;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getTime() {
         return time;
@@ -21,6 +13,14 @@ public class TodoItem {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getTimeText() {
+        return timeText;
+    }
+
+    public void setTimeText(String timeText) {
+        this.timeText = timeText;
     }
 
     public String getTodo() {
