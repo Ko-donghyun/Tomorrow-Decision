@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_marginTop="40dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#ffffff">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textSize="24dp"
+            android:padding="10dp"
+            android:gravity="center"
+            android:text="삭제 알림"
+            android:textColor="#000000"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical"
+            android:background="#dcdcdc"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:id="@+id/dialog_delete_item"
+            android:text="subTitle"
+            android:textColor="#000000"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="취소"
+                android:id="@+id/dialog_delete_cancel"/>
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="확인"
+                android:id="@+id/dialog_delete_done"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
