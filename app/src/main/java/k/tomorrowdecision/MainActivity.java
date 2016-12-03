@@ -194,6 +194,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        Intent restartIntent = new Intent(MainActivity.this, Loading.class);
+        startActivity(restartIntent);
+        finish();
+    }
+
     private void getTodoData() {
         SQLiteDatabase sqLiteDatabase = todoDataBase.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM todo", null);
