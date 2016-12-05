@@ -52,12 +52,12 @@ public class TodoListViewAdapter extends BaseAdapter {
         todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
         todo.setText(listViewItem.getTodo());
         todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
-        time.setTextSize(20);
-        todo.setTextSize(28);
+        time.setTextSize(18);
+        todo.setTextSize(24);
         if (position == 24) {
             time.setText(listViewItem.getTimeText());
             time.setTextSize(20);
-            todo.setTextSize(60);
+            todo.setTextSize(40);
         }
         itemLayout.setBackgroundColor(Color.parseColor(listViewItem.getBackgroundColorCode()));
         return convertView;

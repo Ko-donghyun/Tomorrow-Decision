@@ -67,6 +67,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:textSize="16dp"
                 android:text="취소"
                 android:id="@+id/dialog_color_picker_cancel"/>
 
@@ -74,6 +75,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:textSize="16dp"
                 android:text="확인"
                 android:id="@+id/dialog_color_picker_done"/>
 

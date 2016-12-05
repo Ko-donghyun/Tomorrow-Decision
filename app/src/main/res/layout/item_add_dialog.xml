@@ -56,6 +56,7 @@
             android:textColorHint="#999999"
             android:id="@+id/item_text"
             android:background="@android:color/transparent"
+            android:textSize="16dp"
             android:hint="입력해주세요"/>
 
         <LinearLayout
@@ -67,6 +68,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:textSize="16dp"
                 android:text="취소"
                 android:id="@+id/dialog_cancel"/>
 
@@ -74,6 +76,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:textSize="16dp"
                 android:text="추가"
                 android:id="@+id/dialog_done"/>
 
