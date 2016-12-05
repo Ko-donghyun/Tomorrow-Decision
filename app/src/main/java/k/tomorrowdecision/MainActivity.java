@@ -13,10 +13,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -29,9 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
@@ -400,7 +396,6 @@ public class MainActivity extends AppCompatActivity {
             int viewId = v.getId();
             for (int i = 0; i < 9; i++) {
                 if (viewId == buttonArray[i]) {
-                    Log.d("aa", Integer.toString(i));
                     buttonIndex = i;
                     break;
                 }
