@@ -48,18 +48,25 @@ public class TodoListViewAdapter extends BaseAdapter {
 
         // 아이템 내 각 위젯에 데이터 반영
         time.setText(listViewItem.getTimeText().substring(12, 15));
-//        time.setText(listViewItem.getTime());
-        todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
         todo.setText(listViewItem.getTodo());
-        todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
-        time.setTextSize(18);
-        todo.setTextSize(24);
+        time.setTextSize(14);
+        todo.setTextSize(20);
+
+        if (position < 24) {
+            todo.setTextColor(Color.parseColor("#9A9A9A"));
+            time.setTextColor(Color.parseColor("#9A9A9A"));
+            itemLayout.setBackgroundColor(Color.parseColor("#D4D4D4"));
+        } else {
+            todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
+            time.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
+            itemLayout.setBackgroundColor(Color.parseColor(listViewItem.getBackgroundColorCode()));
+        }
         if (position == 24) {
             time.setText(listViewItem.getTimeText());
+            time.setTextColor(Color.parseColor("#000000"));
             time.setTextSize(20);
             todo.setTextSize(40);
         }
-        itemLayout.setBackgroundColor(Color.parseColor(listViewItem.getBackgroundColorCode()));
         return convertView;
     }
 
