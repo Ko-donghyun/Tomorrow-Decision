@@ -1,6 +1,7 @@
 package k.tomorrowdecision;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -504,6 +505,8 @@ public class MainActivity extends AppCompatActivity {
                     long intervalTime = tempTime - backPressedTime;
 
                     if ( 0 <= intervalTime && FINISH_INTERVAL_TIME >= intervalTime ) {
+                        WidgetProvider widgetProvider = new WidgetProvider();
+                        widgetProvider.updateWidget(MainActivity.this);
                         super.onBackPressed();
                     }
                     else {
