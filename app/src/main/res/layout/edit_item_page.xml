@@ -20,6 +20,7 @@
             android:background="#efefef"
             android:textColor="#000000"
             android:id="@+id/cancel_button"
+            android:textSize="16dp"
             android:text="취소" />
 
         <TextView
@@ -42,6 +43,7 @@
             android:background="#efefef"
             android:textColor="#000000"
             android:id="@+id/done_button"
+            android:textSize="16dp"
             android:text="완료" />
 
     </LinearLayout>
@@ -66,6 +68,7 @@
             android:padding="5dp"
             android:textColor="#000000"
             android:text="12월 09일 (금) 19시"
+            android:textSize="15dp"
             android:id="@+id/todo_time"
             />
 
@@ -84,6 +87,7 @@
                 android:textColorHint="#999999"
                 android:id="@+id/todo_item"
                 android:background="@android:color/transparent"
+                android:textSize="18dp"
                 android:hint="직접 입력"/>
 
         </LinearLayout>
@@ -114,6 +118,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:textSize="14dp"
                 android:text="글자 색상 선택"
                 android:padding="5dp"
                 android:textColor="#000000"
@@ -127,6 +132,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:textSize="14dp"
                 android:text="배경 색상 선택"
                 android:padding="5dp"
                 android:textColor="#000000"
@@ -261,7 +267,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="Memorize"
-                    android:textSize="20dp"
+                    android:textSize="16dp"
                     android:padding="5dp"
                     android:textColor="#000000"
                     />
@@ -328,7 +334,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:textSize="20dp"
+                    android:textSize="16dp"
                     android:text="Must Do"
                     android:padding="5dp"
                     android:textColor="#000000"
