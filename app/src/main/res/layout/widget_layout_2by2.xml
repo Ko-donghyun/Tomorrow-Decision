@@ -33,7 +33,7 @@
             android:textColor="#FFFFFF"
             android:text="+"
             android:textSize="14dp"
-            android:id="@+id/into_app"/>
+            android:id="@+id/update"/>
 
     </LinearLayout>
 
