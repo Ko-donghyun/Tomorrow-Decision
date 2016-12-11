@@ -210,12 +210,12 @@ public class WidgetProvider extends AppWidgetProvider {
         Intent intent = new Intent(context, WidgetProvider.class);
         intent.setAction(PENDING_ACTION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        updateViews.setOnClickPendingIntent(R.id.widget_layout, pendingIntent);
+        updateViews.setOnClickPendingIntent(R.id.update, pendingIntent);
 
         // 앱으로 진입하는 버튼 추가
         Intent intoIntent = new Intent(context, Loading.class);
         PendingIntent pe = PendingIntent.getActivity(context, 0, intoIntent, 0);
-        updateViews.setOnClickPendingIntent(R.id.into_app, pe);
+        updateViews.setOnClickPendingIntent(R.id.widget_layout, pe);
 
         // 업데이트 세팅
         appWidgetManager.updateAppWidget(appWidgetId, updateViews);
