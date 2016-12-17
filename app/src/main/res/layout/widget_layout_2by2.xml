@@ -13,7 +13,8 @@
         android:layout_weight="1"
         android:orientation="horizontal"
         android:background="#34a853"
-        android:gravity="end">
+        android:padding="4dp"
+        android:gravity="center_vertical|end">
 
         <TextView
             android:layout_width="match_parent"
@@ -22,17 +23,16 @@
             android:gravity="center"
             android:padding="1dp"
             android:textColor="#FFFFFF"
-            android:layout_marginLeft="56dp"
+            android:layout_marginLeft="48dp"
             android:textSize="13dp"
             android:text="내일, 내 일?"/>
 
-        <TextView
+        <ImageView
             android:gravity="center"
-            android:layout_width="28dp"
-            android:layout_height="match_parent"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:textColor="#FFFFFF"
-            android:text="+"
-            android:textSize="14dp"
+            android:src="@drawable/refresh"
             android:id="@+id/update"/>
 
     </LinearLayout>
