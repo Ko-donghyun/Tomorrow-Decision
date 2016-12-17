@@ -1,7 +1,6 @@
 package k.tomorrowdecision;
 
 import android.app.Activity;
-import android.appwidget.AppWidgetManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -22,11 +21,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -59,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
     int itemPosition;
 
     Boolean clickFlag = true;
-    Button cancelButton;
-    Button doneButton;
+    ImageView cancelButton;
+    ImageView doneButton;
 
     private final long FINISH_INTERVAL_TIME = 1000;
     private long backPressedTime = 0;
@@ -69,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     EditText todo;
     LinearLayout todoBackground;
 
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM월 dd일 (E) HH시 mm:ss", Locale.getDefault());
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM월 dd일 (E) HH시", Locale.getDefault());
 
     int[] buttonArray = {
       R.id.color_picker_01, R.id.color_picker_02, R.id.color_picker_03,
@@ -90,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
     String itemAddDialogSwitch = "memorize";
     String itemDeleteDialogSwitch = "memorize";
 
-    TextView memorizeArrange;
-    TextView mustdoArrange;
+    ImageView memorizeArrange;
+    ImageView mustdoArrange;
 
     private ItemAddDialog itemAddDialog;
     private ItemDeleteDialog itemDeleteDialog;
@@ -99,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ColorPickerDialog colorPickerDialog;
 
-
+    Tracker tracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,12 +114,17 @@ public class MainActivity extends AppCompatActivity {
         }
         imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        tracker = application.getDefaultTracker();
+        tracker.setScreenName("MainActivity");
+        tracker.send(new HitBuilders.ScreenViewBuilder().build());
+
         // 데이터 베이스 가져오기
         todoDataBase = new TodoDataBase(this, todoDBName, null, todoDBVersion);
         memorizeDataBase = new MemorizeDataBase(this, memorizeDBName, null, memorizeDBVersion);
         mustDoDataBase = new MustDoDataBase(this, mustDoDBName, null, mustDoDBVersion);
 
-        cancelButton = (Button) findViewById(R.id.cancel_button);
+        cancelButton = (ImageView) findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        doneButton = (Button) findViewById(R.id.done_button);
+        doneButton = (ImageView) findViewById(R.id.done_button);
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,9 +165,9 @@ public class MainActivity extends AppCompatActivity {
         todoTime = (TextView) findViewById(R.id.todo_time);
         todo = (EditText) findViewById(R.id.todo_item);
         todoBackground = (LinearLayout) findViewById(R.id.todo_background);
-        memorizeArrange = (TextView) findViewById(R.id.memorize_arrange);
+        memorizeArrange = (ImageView) findViewById(R.id.memorize_arrange);
         memorizeArrange.setOnClickListener(itemAddClickListener);
-        mustdoArrange = (TextView) findViewById(R.id.mustdo_arrange);
+        mustdoArrange = (ImageView) findViewById(R.id.mustdo_arrange);
         mustdoArrange.setOnClickListener(itemAddClickListener);
 
         // 리스트뷰 참조 및 Adapter달기
@@ -176,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_in));
                 mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_out));
                 mainViewFlipper.showNext();
+                tracker.send(new HitBuilders.EventBuilder().setCategory("EditPage").setAction("Press Button").setLabel("Move EditPage").build());
             }
         });
         todoListView.setSelection(21);
@@ -240,6 +250,7 @@ public class MainActivity extends AppCompatActivity {
                 colorPickerSwitch = "background";
                 backgroundColorPicker.setBackgroundColor(Color.parseColor("#efefef"));
                 textColorPicker.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                tracker.send(new HitBuilders.EventBuilder().setCategory("EditPage").setAction("Press Button").setLabel("background Color Choice Click").build());
             }
         });
         textColorPicker = (Button) findViewById(R.id.text_color_picker);
@@ -249,8 +260,21 @@ public class MainActivity extends AppCompatActivity {
                 colorPickerSwitch = "text";
                 backgroundColorPicker.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 textColorPicker.setBackgroundColor(Color.parseColor("#efefef"));
+                tracker.send(new HitBuilders.EventBuilder().setCategory("EditPage").setAction("Press Button").setLabel("text Color Choice Click").build());
             }
         });
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     @Override
@@ -334,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
         mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
         mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
         mainViewFlipper.showPrevious();
+        tracker.send(new HitBuilders.EventBuilder().setCategory("EditPage").setAction("Press Button").setLabel("saveTodo").build());
     }
 
     private long saveMemorizeItem(String todo) {
@@ -345,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
         long id = memorizeDatabase.insert("memorize", null, values);
 
         memorizeDatabase.close();
-
+        tracker.send(new HitBuilders.EventBuilder().setCategory("AddItem").setAction("Press Button").setLabel("memorize item add button").build());
         return id;
     }
 
@@ -358,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
         long id = mustDoDatabase.insert("must_do", null, values);
 
         mustDoDatabase.close();
-
+        tracker.send(new HitBuilders.EventBuilder().setCategory("AddItem").setAction("Press Button").setLabel("mustdo item add button").build());
         return id;
     }
 
@@ -366,12 +391,14 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase mustDoDatabase = memorizeDataBase.getWritableDatabase();
         mustDoDatabase.delete("memorize", "_id=" + id, null);
         mustDoDatabase.close();
+        tracker.send(new HitBuilders.EventBuilder().setCategory("DeleteItem").setAction("Press Button").setLabel("memorize item delete button").build());
     }
 
     private void deleteMustDoItem(long id) {
         SQLiteDatabase mustDoDatabase = mustDoDataBase.getWritableDatabase();
         mustDoDatabase.delete("must_do", "_id=" + id, null);
         mustDoDatabase.close();
+        tracker.send(new HitBuilders.EventBuilder().setCategory("DeleteItem").setAction("Press Button").setLabel("mustdo item delete button").build());
     }
 
     Button.OnClickListener colorPickerListener = new View.OnClickListener() {
@@ -403,6 +430,7 @@ public class MainActivity extends AppCompatActivity {
             }
             colorPickerDialog = new ColorPickerDialog(MainActivity.this, dialogColorPickerCancelClickListener, dialogColorPickerDoneClickListener);
             colorPickerDialog.show();
+            tracker.send(new HitBuilders.EventBuilder().setCategory("Color Picker").setAction("Press Button").setLabel("colorPicker open button").build());
             return false;
         }
     };
@@ -467,6 +495,7 @@ public class MainActivity extends AppCompatActivity {
             colorPickerEditors[buttonIndex].putString("color_" + Integer.toString(buttonIndex), stringColor);
             colorPickerEditors[buttonIndex].apply();
             colorPickerDialog.dismiss();
+            tracker.send(new HitBuilders.EventBuilder().setCategory("Color Picker").setAction("Press Button").setLabel("colorPicker change color button").build());
         }
     };
 
