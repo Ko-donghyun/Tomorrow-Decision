@@ -463,6 +463,13 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
+    private View.OnClickListener dialogOkayClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            informationDialog.dismiss();
+        }
+    };
+
+
     private View.OnClickListener dialogDeleteDoneClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             if (itemDeleteDialogSwitch.equals("Memorize")) {
