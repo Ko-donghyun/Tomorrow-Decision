@@ -103,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ColorPickerDialog colorPickerDialog;
 
+    private InformationDialog informationDialog;
+
     Tracker tracker;
 
     @Override
@@ -128,12 +130,14 @@ public class MainActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickFlag = false;
-                hideKeyboard(todo);
-                mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
-                mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
-                mainViewFlipper.showPrevious();
-                clickFlag = true;
+                if (clickFlag) {
+                    clickFlag = false;
+                    hideKeyboard(todo);
+                    mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
+                    mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
+                    mainViewFlipper.showPrevious();
+                    clickFlag = true;
+                }
             }
         });
 
@@ -141,9 +145,18 @@ public class MainActivity extends AppCompatActivity {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickFlag = false;
-                saveTodo(itemPosition);
-                clickFlag = true;
+
+                SimpleDateFormat hourFormat = new SimpleDateFormat("HH", Locale.getDefault());
+                int hour = Integer.parseInt(hourFormat.format(new Date(System.currentTimeMillis())));
+
+                if (clickFlag && (hour < 2 || 20 <= hour)) {
+                    clickFlag = false;
+                    saveTodo(itemPosition);
+                    clickFlag = true;
+                } else {
+                    informationDialog = new InformationDialog(MainActivity.this, dialogOkayClickListener);
+                    informationDialog.show();
+                }
             }
         });
 
