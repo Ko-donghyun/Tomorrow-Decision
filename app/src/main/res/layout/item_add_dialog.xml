@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:weightSum="10"
         android:orientation="vertical"
-        android:background="#ffffff">
+        android:background="#f1f1f1">
 
         <TextView
             android:layout_width="match_parent"
