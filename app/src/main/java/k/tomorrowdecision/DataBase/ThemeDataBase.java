@@ -61,7 +61,7 @@ public class ThemeDataBase extends SQLiteOpenHelper {
         // 레코드 추가
         database.execSQL("INSERT INTO user_theme VALUES(null, 1, 1);");
         database.execSQL("INSERT INTO user_theme VALUES(null, 1, 2);");
-        database.execSQL("INSERT INTO user_theme VALUES(null, 1, 3);");
         database.execSQL("INSERT INTO user_theme VALUES(null, 1, 4);");
+        database.execSQL("INSERT INTO user_theme VALUES(null, 1, 5);");
     }
 }
