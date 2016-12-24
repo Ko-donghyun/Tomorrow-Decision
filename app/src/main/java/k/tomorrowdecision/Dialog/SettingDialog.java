@@ -41,9 +41,9 @@ public class SettingDialog extends Dialog {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Toast.makeText(context, Boolean.toString(isChecked), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, Boolean.toString(isChecked), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(context, Boolean.toString(isChecked), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, Boolean.toString(isChecked), Toast.LENGTH_SHORT).show();
                 }
             }
         });
