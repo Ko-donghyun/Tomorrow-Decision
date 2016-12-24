@@ -36,12 +36,25 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import k.tomorrowdecision.DataBase.MemorizeDataBase;
+import k.tomorrowdecision.DataBase.MustDoDataBase;
+import k.tomorrowdecision.DataBase.TodoDataBase;
+import k.tomorrowdecision.Dialog.ColorPickerDialog;
+import k.tomorrowdecision.Dialog.InformationDialog;
+import k.tomorrowdecision.Dialog.ItemAddDialog;
+import k.tomorrowdecision.Dialog.ItemDeleteDialog;
+import k.tomorrowdecision.Dialog.SettingDialog;
+import k.tomorrowdecision.Dialog.ThemePickerDialog;
+import k.tomorrowdecision.Item.ThemeItem;
+import k.tomorrowdecision.ListViewAdapter.TextListViewAdapter;
+import k.tomorrowdecision.ListViewAdapter.TodoListViewAdapter;
+
 public class MainActivity extends AppCompatActivity {
     InputMethodManager imm;
     // 할 일 디비
     TodoDataBase todoDataBase;
     final String todoDBName = "Todo.db";
-    final int todoDBVersion = 1;
+    final int todoDBVersion = 2;
     MemorizeDataBase memorizeDataBase;
     final String memorizeDBName = "memorize.db";
     final int memorizeDBVersion = 1;
@@ -110,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_page);
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().setStatusBarColor(Color.BLACK);
         }

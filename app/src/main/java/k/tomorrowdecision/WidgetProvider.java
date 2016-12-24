@@ -19,11 +19,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import k.tomorrowdecision.DataBase.TodoDataBase;
+import k.tomorrowdecision.Item.TodoItem;
+
 public class WidgetProvider extends AppWidgetProvider {
 
     TodoDataBase todoDataBase;
     final String todoDBName = "Todo.db";
-    final int todoDBVersion = 1;
+    final int todoDBVersion = 2;
 
     public static SharedPreferences lastGetInTimePreference;
     public static SharedPreferences.Editor lastGetInTimeEditor;
@@ -213,7 +216,7 @@ public class WidgetProvider extends AppWidgetProvider {
         updateViews.setOnClickPendingIntent(R.id.update, pendingIntent);
 
         // 앱으로 진입하는 버튼 추가
-        Intent intoIntent = new Intent(context, Loading.class);
+        Intent intoIntent = new Intent(context, LoadingActivity.class);
         PendingIntent pe = PendingIntent.getActivity(context, 0, intoIntent, 0);
         updateViews.setOnClickPendingIntent(R.id.widget_layout, pe);
 
