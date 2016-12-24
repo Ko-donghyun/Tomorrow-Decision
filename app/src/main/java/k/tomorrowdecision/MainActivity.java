@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 SimpleDateFormat hourFormat = new SimpleDateFormat("HH", Locale.getDefault());
                 int hour = Integer.parseInt(hourFormat.format(new Date(System.currentTimeMillis())));
 
-                if (clickFlag && (hour < 2 || 20 <= hour)) {
+                if (clickFlag && (hour < 2 || 18 <= hour) && mainViewFlipper.getDisplayedChild() == 1) {
                     clickFlag = false;
                     saveTodo(itemPosition);
                     clickFlag = true;
