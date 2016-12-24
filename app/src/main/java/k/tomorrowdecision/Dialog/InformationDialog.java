@@ -1,4 +1,4 @@
-package k.tomorrowdecision;
+package k.tomorrowdecision.Dialog;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+
+import k.tomorrowdecision.R;
 
 public class InformationDialog extends Dialog {
 
