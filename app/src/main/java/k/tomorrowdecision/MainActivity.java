@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     final int mustDoDBVersion = 1;
 
     ViewFlipper mainViewFlipper;
+    ViewFlipper editItemViewFlipper;
 
     ListView memorizeListView;
     ListView mustDoListView;
@@ -101,6 +102,15 @@ public class MainActivity extends AppCompatActivity {
     Button colorButtons[] = new Button[9];
     int buttonIndex;
 
+    int[] importanceButtonArray = {
+            R.id.importance_1, R.id.importance_2, R.id.importance_3, R.id.importance_4, R.id.importance_5
+    };
+    String[] importanceColorCodeArray = new String[10];
+    public static SharedPreferences[] importanceColorPreferences = new SharedPreferences[10];
+    public static SharedPreferences.Editor[] importanceColorEditors = new SharedPreferences.Editor[10];
+    Button importanceButtons[] = new Button[5];
+    int importanceIndex;
+
     Button backgroundColorPicker;
     Button textColorPicker;
     String colorPickerSwitch = "text";
@@ -115,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
     int deleteItemPosition;
 
     private ColorPickerDialog colorPickerDialog;
+    ThemePickerDialog themePickerDialog;
 
     private InformationDialog informationDialog;
 
@@ -122,6 +133,10 @@ public class MainActivity extends AppCompatActivity {
     private SettingDialog settingDialog;
 
     Tracker tracker;
+
+    public static SharedPreferences themePreference;
+    public static SharedPreferences.Editor themeEditor;
+    private int theme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +147,9 @@ public class MainActivity extends AppCompatActivity {
         }
         imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
+        themePreference = getSharedPreferences("theme", Activity.MODE_PRIVATE);
+        theme = themePreference.getInt("theme", 1);
+
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         tracker = application.getDefaultTracker();
         tracker.setScreenName("MainActivity");
@@ -141,6 +159,42 @@ public class MainActivity extends AppCompatActivity {
         todoDataBase = new TodoDataBase(this, todoDBName, null, todoDBVersion);
         memorizeDataBase = new MemorizeDataBase(this, memorizeDBName, null, memorizeDBVersion);
         mustDoDataBase = new MustDoDataBase(this, mustDoDBName, null, mustDoDBVersion);
+
+        todoListView = (ListView) findViewById(R.id.todo_list_view);
+        memorizeListView = (ListView) findViewById(R.id.memorize_list_view);
+        mustDoListView = (ListView) findViewById(R.id.must_do_list_view);
+        mainViewFlipper = (ViewFlipper) findViewById(R.id.main_view_flipper);
+        editItemViewFlipper = (ViewFlipper) findViewById(R.id.edit_item_view_flipper);
+        mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.push_left_in));
+        mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.push_left_out));
+
+        for (int i = 0; i < 5; i++) {
+            importanceButtons[i] = (Button) findViewById(importanceButtonArray[i]);
+            importanceButtons[i].setOnClickListener(importanceChangeListener);
+        }
+
+        for (int i = 0; i < 5; i++) {
+            importanceColorPreferences[i * 2] = getSharedPreferences("level_" + Integer.toString(i) + "_tg", Activity.MODE_PRIVATE);
+            importanceColorPreferences[(i * 2) + 1] = getSharedPreferences("level_" + Integer.toString(i) + "_bg", Activity.MODE_PRIVATE);
+            importanceColorCodeArray[(i * 2)] = importanceColorPreferences[(i * 2)].getString("level_" + Integer.toString(i) + "_tg", "#000000");
+            importanceColorCodeArray[(i * 2) + 1] = importanceColorPreferences[(i * 2) + 1].getString("level_" + Integer.toString(i) + "_bg", "#FFFFFF");
+        }
+
+        for (int i = 0; i < 9; i++) {
+            colorButtons[i] = (Button) findViewById(buttonArray[i]);
+            colorButtons[i].setOnClickListener(colorPickerListener);
+            colorButtons[i].setOnLongClickListener(changeColorPickerListener);
+            colorPickerPreferences[i] = getSharedPreferences("color_" + Integer.toString(i), Activity.MODE_PRIVATE);
+            colorButtons[i].setBackgroundColor(Color.parseColor(colorPickerPreferences[i].getString("color_" + Integer.toString(i), colorCodeArray[i])));
+        }
+
+        // Adapter 생성
+        todoListViewAdapter = new TodoListViewAdapter(theme, importanceColorCodeArray);
+        memorizeListViewAdapter = new TextListViewAdapter();
+        mustDoListViewAdapter = new TextListViewAdapter();
+        getTodoData();
+        getMemorizeData();
+        getMustDoData();
 
         settingButton = (ImageView) findViewById(R.id.setting);
         settingButton.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +230,11 @@ public class MainActivity extends AppCompatActivity {
 
                 if (clickFlag && (hour < 2 || 18 <= hour) && mainViewFlipper.getDisplayedChild() == 1) {
                     clickFlag = false;
-                    saveTodo(itemPosition);
+                    if (theme == 1) {
+                        saveCustomTodo(itemPosition);
+                    } else {
+                        saveImportanceTodo(itemPosition);
+                    }
                     clickFlag = true;
                     settingButton.setVisibility(View.VISIBLE);
                 } else {
@@ -186,20 +244,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        todoListView = (ListView) findViewById(R.id.todo_list_view);
-        memorizeListView = (ListView) findViewById(R.id.memorize_list_view);
-        mustDoListView = (ListView) findViewById(R.id.must_do_list_view);
-        mainViewFlipper = (ViewFlipper) findViewById(R.id.main_view_flipper);
-        mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.push_left_in));
-        mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.push_left_out));
-
-        // Adapter 생성
-        todoListViewAdapter = new TodoListViewAdapter();
-        getTodoData();
-        memorizeListViewAdapter = new TextListViewAdapter();
-        getMemorizeData();
-        mustDoListViewAdapter = new TextListViewAdapter();
-        getMustDoData();
 
         todoTime = (TextView) findViewById(R.id.todo_time);
         todo = (EditText) findViewById(R.id.todo_item);
@@ -215,12 +259,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 todoTime.setText(todoListViewAdapter.getItem(position).getTimeText());
-                todoBackground.setBackgroundColor(Color.parseColor(todoListViewAdapter.getItem(position).getBackgroundColorCode()));
                 todo.setText(todoListViewAdapter.getItem(position).getTodo());
-                todo.setTextColor(Color.parseColor(todoListViewAdapter.getItem(position).getTextColorCode()));
                 timeText = todoListViewAdapter.getItem(position).getTime();
                 itemPosition = position;
 
+                themePreference = getSharedPreferences("theme", Activity.MODE_PRIVATE);
+                theme = themePreference.getInt("theme", 1);
+                if (theme == 1) {
+                    todoBackground.setBackgroundColor(Color.parseColor(todoListViewAdapter.getItem(position).getBackgroundColorCode()));
+                    todo.setTextColor(Color.parseColor(todoListViewAdapter.getItem(position).getTextColorCode()));
+                    editItemViewFlipper.setDisplayedChild(0);
+                } else {
+                    todoBackground.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                    todo.setTextColor(Color.parseColor("#000000"));
+                    for (int i = 0; i < 5; i++) {
+                        importanceButtons[i].setBackgroundColor(Color.parseColor("#FFFFFF"));
+                    }
+                    importanceButtons[todoListViewAdapter.getItem(position).getImportance()].setBackgroundColor(Color.parseColor("#EFEFEF"));
+                    editItemViewFlipper.setDisplayedChild(1);
+                }
                 settingButton.setVisibility(View.INVISIBLE);
                 mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_in));
                 mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_out));
@@ -274,15 +331,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        for (int i = 0; i < 9; i++) {
-            colorButtons[i] = (Button) findViewById(buttonArray[i]);
-            colorButtons[i].setOnClickListener(colorPickerListener);
-            colorButtons[i].setOnLongClickListener(changeColorPickerListener);
-            colorPickerPreferences[i] = getSharedPreferences("color_" + Integer.toString(i), Activity.MODE_PRIVATE);
-            colorButtons[i].setBackgroundColor(Color.parseColor(colorPickerPreferences[i].getString("color_" + Integer.toString(i), colorCodeArray[i])));
-        }
-
         backgroundColorPicker = (Button) findViewById(R.id.background_color_picker);
         backgroundColorPicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -320,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRestart() {
         super.onRestart();
-        Intent restartIntent = new Intent(MainActivity.this, Loading.class);
+        Intent restartIntent = new Intent(MainActivity.this, LoadingActivity.class);
         startActivity(restartIntent);
         finish();
     }
@@ -333,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
         do {
             Date data = new Date(Long.parseLong(cursor.getString(0)));
             String stringDate = simpleDateFormat.format(data);
-            todoListViewAdapter.addItem(cursor.getString(0), stringDate, cursor.getString(1), cursor.getString(2), cursor.getString(3));
+            todoListViewAdapter.addItem(cursor.getString(0), stringDate, cursor.getString(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4));
         } while( cursor.moveToNext() );
 
         cursor.close();
@@ -371,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
         sqLiteDatabase.close();
     }
 
-    private void saveTodo(int itemPosition) {
+    private void saveCustomTodo(int itemPosition) {
         SQLiteDatabase todoDatabase = todoDataBase.getWritableDatabase();
 
         int backgroundColor = Color.TRANSPARENT;
@@ -391,14 +439,35 @@ public class MainActivity extends AppCompatActivity {
 
         todoDatabase.close();
 
-        todoListViewAdapter.updateItem(itemPosition, todo.getText().toString(), textHexCode, backgroundHexCode);
+        todoListViewAdapter.updateCustomItem(itemPosition, todo.getText().toString(), textHexCode, backgroundHexCode);
         todoListViewAdapter.notifyDataSetChanged();
         hideKeyboard(todo);
 
         mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
         mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
         mainViewFlipper.showPrevious();
-        tracker.send(new HitBuilders.EventBuilder().setCategory("EditPage").setAction("Press Button").setLabel("saveTodo").build());
+        tracker.send(new HitBuilders.EventBuilder().setCategory("EditPage").setAction("Press Button").setLabel("saveCustomTodo").build());
+    }
+
+    private void saveImportanceTodo(int itemPosition) {
+        SQLiteDatabase todoDatabase = todoDataBase.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("todo", todo.getText().toString());
+        values.put("importance", importanceIndex);
+        todoDatabase.update("todo", values, "time='" + timeText + "'", null);
+
+        todoDatabase.close();
+
+        todoListViewAdapter.updateThemeItem(itemPosition, todo.getText().toString(), importanceIndex);
+        todoListViewAdapter.notifyDataSetChanged();
+        hideKeyboard(todo);
+
+        mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
+        mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
+        mainViewFlipper.showPrevious();
+        tracker.send(new HitBuilders.EventBuilder().setCategory("EditPage").setAction("Press Button").setLabel("saveImportanceTodo").build());
     }
 
     private long saveMemorizeItem(String todo) {
@@ -472,6 +541,20 @@ public class MainActivity extends AppCompatActivity {
             colorPickerDialog.show();
             tracker.send(new HitBuilders.EventBuilder().setCategory("Color Picker").setAction("Press Button").setLabel("colorPicker open button").build());
             return false;
+        }
+    };
+
+    Button.OnClickListener importanceChangeListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int id = v.getId();
+            for (int i = 0; i < 5; i++) {
+                importanceButtons[i].setBackgroundColor(Color.parseColor("#FFFFFF"));
+                if (importanceButtonArray[i] == id) {
+                    importanceIndex = i;
+                }
+            }
+            v.setBackgroundColor(Color.parseColor("#EFEFEF"));
         }
     };
 
@@ -552,10 +635,48 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private View.OnClickListener themeCloseClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            themePickerDialog.dismiss();
+        }
+    };
+
+    private View.OnClickListener themeApplyClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            ThemeItem themeItem = themePickerDialog.getSelectedThemeItem();
+            if (themeItem.getUsable() == 1) {
+                importanceColorCodeArray = themeItem.getImportanceColorCodes();
+
+                themeEditor = themePreference.edit();
+                themeEditor.putInt("theme", themePickerDialog.getSelectedTheme());
+                themeEditor.apply();
+
+                for (int i = 0; i < 5; i++) {
+                    // 글자 색
+                    importanceColorEditors[(i * 2)] = importanceColorPreferences[(i * 2)].edit();
+                    importanceColorEditors[(i * 2)].putString("level_" + Integer.toString(i) + "_tg", importanceColorCodeArray[(i * 2)]);
+                    importanceColorEditors[(i * 2)].apply();
+
+                    // 배경 색
+                    importanceColorEditors[(i * 2) + 1] = importanceColorPreferences[(i * 2) + 1].edit();
+                    importanceColorEditors[(i * 2) + 1].putString("level_" + Integer.toString(i) + "_bg", importanceColorCodeArray[(i * 2) + 1]);
+                    importanceColorEditors[(i * 2) + 1].apply();
+                }
+                todoListViewAdapter.updateTheme(themePickerDialog.getSelectedTheme(), importanceColorCodeArray);
+                todoListViewAdapter.notifyDataSetChanged();
+                themePickerDialog.dismiss();
+            } else {
+                Toast.makeText(MainActivity.this, "잠금 설정된 테마는 아직 풀 수 없습니다.", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    };
 
     private View.OnClickListener settingThemeClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             settingDialog.dismiss();
+            themePickerDialog = new ThemePickerDialog(MainActivity.this, themeCloseClickListener, themeApplyClickListener);
+            themePickerDialog.show();
         }
     };
 
