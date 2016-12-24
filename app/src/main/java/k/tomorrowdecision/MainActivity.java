@@ -118,6 +118,9 @@ public class MainActivity extends AppCompatActivity {
 
     private InformationDialog informationDialog;
 
+    private ImageView settingButton;
+    private SettingDialog settingDialog;
+
     Tracker tracker;
 
     @Override
@@ -139,17 +142,26 @@ public class MainActivity extends AppCompatActivity {
         memorizeDataBase = new MemorizeDataBase(this, memorizeDBName, null, memorizeDBVersion);
         mustDoDataBase = new MustDoDataBase(this, mustDoDBName, null, mustDoDBVersion);
 
+        settingButton = (ImageView) findViewById(R.id.setting);
+        settingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                settingDialog = new SettingDialog(MainActivity.this, okayClickListener, settingThemeClickListener);
+                settingDialog.show();
+            }
+        });
+        settingButton.setVisibility(View.VISIBLE);
+
         cancelButton = (ImageView) findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (clickFlag) {
-                    clickFlag = false;
+                if (mainViewFlipper.getDisplayedChild() == 1) {
                     hideKeyboard(todo);
                     mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
                     mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
                     mainViewFlipper.showPrevious();
-                    clickFlag = true;
+                    settingButton.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -166,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                     clickFlag = false;
                     saveTodo(itemPosition);
                     clickFlag = true;
+                    settingButton.setVisibility(View.VISIBLE);
                 } else {
                     informationDialog = new InformationDialog(MainActivity.this, dialogOkayClickListener);
                     informationDialog.show();
@@ -208,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 timeText = todoListViewAdapter.getItem(position).getTime();
                 itemPosition = position;
 
+                settingButton.setVisibility(View.INVISIBLE);
                 mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_in));
                 mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_out));
                 mainViewFlipper.showNext();
@@ -532,6 +546,19 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private View.OnClickListener okayClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            settingDialog.dismiss();
+        }
+    };
+
+
+    private View.OnClickListener settingThemeClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            settingDialog.dismiss();
+        }
+    };
+
     TextView.OnClickListener itemAddClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             String title = "";
@@ -559,6 +586,7 @@ public class MainActivity extends AppCompatActivity {
             //하드웨어 뒤로가기 버튼에 따른 이벤트 설정
             case KeyEvent.KEYCODE_BACK:
                 if (mainViewFlipper.getDisplayedChild() == 1) {
+                    settingButton.setVisibility(View.VISIBLE);
                     mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_in));
                     mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_right_out));
                     mainViewFlipper.showPrevious();
