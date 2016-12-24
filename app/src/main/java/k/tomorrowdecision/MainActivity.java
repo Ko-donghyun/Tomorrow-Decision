@@ -665,6 +665,7 @@ public class MainActivity extends AppCompatActivity {
                 todoListViewAdapter.updateTheme(themePickerDialog.getSelectedTheme(), importanceColorCodeArray);
                 todoListViewAdapter.notifyDataSetChanged();
                 themePickerDialog.dismiss();
+                tracker.send(new HitBuilders.EventBuilder().setCategory("Theme Picker").setAction("Press Button").setLabel("themePicker apply theme").build());
             } else {
                 Toast.makeText(MainActivity.this, "잠금 설정된 테마는 아직 풀 수 없습니다.", Toast.LENGTH_SHORT).show();
             }
