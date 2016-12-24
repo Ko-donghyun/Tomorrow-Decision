@@ -11,16 +11,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
-import android.view.animation.AnimationUtils;
-import android.widget.Toast;
 
-public class Loading extends Activity {
+import k.tomorrowdecision.DataBase.TodoDataBase;
+
+public class LoadingActivity extends Activity {
 
     Intent targetIntent;
 
     TodoDataBase todoDataBase;
     final String todoDBName = "Todo.db";
-    final int todoDBVersion = 1;
+    final int todoDBVersion = 2;
 
     public static SharedPreferences lastGetInTimePreference;
     public static SharedPreferences.Editor lastGetInTimeEditor;
@@ -86,7 +86,7 @@ public class Loading extends Activity {
         handler.postDelayed(new Runnable() {
 
             public void run() {
-                targetIntent = new Intent(Loading.this, MainActivity.class);
+                targetIntent = new Intent(LoadingActivity.this, MainActivity.class);
                 startActivity(targetIntent);
                 finish();
             }
@@ -109,6 +109,7 @@ public class Loading extends Activity {
                     // 마지막 실행 시간의 25시간 이후의 시간부터 지워진 시간만큼 생성해줘야 함
                     values.put("time", ((lastGetInTime / (3600000)) * 3600000) + (25 + i) * 3600000);
                     values.put("todo", "");
+                    values.put("importance", 0);
                     values.put("textColorCode", "#000000");
                     values.put("backgroundColorCode", "#FFFFFF");
                     todoDatabase.insert("todo", null, values);
@@ -125,6 +126,7 @@ public class Loading extends Activity {
                     // 현재 시간의 +25시간 이후 까지 생성
                     values.put("time", (((currentTime / 3600000) * 3600000)) - 86400000 + 3600000 * i);
                     values.put("todo", "");
+                    values.put("importance", 0);
                     values.put("textColorCode", "#000000");
                     values.put("backgroundColorCode", "#FFFFFF");
                     todoDatabase.insert("todo", null, values);

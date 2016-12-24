@@ -1,4 +1,4 @@
-package k.tomorrowdecision;
+package k.tomorrowdecision.Item;
 
 public class TextItem {
     private long id;

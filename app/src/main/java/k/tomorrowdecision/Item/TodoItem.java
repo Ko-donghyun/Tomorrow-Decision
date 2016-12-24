@@ -1,9 +1,10 @@
-package k.tomorrowdecision;
+package k.tomorrowdecision.Item;
 
 public class TodoItem {
     private String time;
     private String timeText;
     private String todo;
+    private int importance;
     private String textColorCode;
     private String backgroundColorCode;
 
@@ -29,6 +30,14 @@ public class TodoItem {
 
     public void setTodo(String todo) {
         this.todo = todo;
+    }
+
+    public int getImportance() {
+        return importance;
+    }
+
+    public void setImportance(int importance) {
+        this.importance = importance;
     }
 
     public String getTextColorCode() {

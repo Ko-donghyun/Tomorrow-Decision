@@ -1,6 +1,5 @@
-package k.tomorrowdecision;
+package k.tomorrowdecision.ListViewAdapter;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -12,13 +11,34 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import k.tomorrowdecision.R;
+import k.tomorrowdecision.Item.TodoItem;
+
 public class TodoListViewAdapter extends BaseAdapter {
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
     private ArrayList<TodoItem> listViewItemList = new ArrayList<TodoItem>();
+    private int theme;
+    private String[] importanceColorCodes = new String[10];
 
     // TodoListViewAdapter의 생성자
     public TodoListViewAdapter() {
 
+    }
+
+    public TodoListViewAdapter(int theme, String[] importanceColors) {
+        updateTheme(theme, importanceColors);
+    }
+
+    public String[] getImportanceColorCodes() {
+        return importanceColorCodes;
+    }
+
+    public String getImportanceColorCode(int index) {
+        return importanceColorCodes[index];
+    }
+
+    public void setImportanceColorCodes(String[] importanceColorCodes) {
+        this.importanceColorCodes = importanceColorCodes;
     }
 
     // Adapter에 사용되는 데이터의 개수를 리턴 : 필수 구현
@@ -52,20 +72,36 @@ public class TodoListViewAdapter extends BaseAdapter {
         time.setTextSize(14);
         todo.setTextSize(20);
 
-        if (position < 24) {
-            todo.setTextColor(Color.parseColor("#9A9A9A"));
-            time.setTextColor(Color.parseColor("#9A9A9A"));
-            itemLayout.setBackgroundColor(Color.parseColor("#D4D4D4"));
+        if (theme == 1) {
+            if (position < 24) {
+                todo.setTextColor(Color.parseColor("#9A9A9A"));
+                time.setTextColor(Color.parseColor("#9A9A9A"));
+                itemLayout.setBackgroundColor(Color.parseColor("#D4D4D4"));
+            } else {
+                todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
+                time.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
+                itemLayout.setBackgroundColor(Color.parseColor(listViewItem.getBackgroundColorCode()));
+            }
+            if (position == 24) {
+                time.setText(listViewItem.getTimeText());
+                time.setTextSize(20);
+                todo.setTextSize(40);
+            }
         } else {
-            todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
-            time.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
-            itemLayout.setBackgroundColor(Color.parseColor(listViewItem.getBackgroundColorCode()));
-        }
-        if (position == 24) {
-            time.setText(listViewItem.getTimeText());
-            time.setTextColor(Color.parseColor("#000000"));
-            time.setTextSize(20);
-            todo.setTextSize(40);
+            if (position < 24) {
+                todo.setTextColor(Color.parseColor("#9A9A9A"));
+                time.setTextColor(Color.parseColor("#9A9A9A"));
+                itemLayout.setBackgroundColor(Color.parseColor("#D4D4D4"));
+            } else {
+                todo.setTextColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2)]));
+                time.setTextColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2)]));
+                itemLayout.setBackgroundColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2) + 1]));
+                if (position == 24) {
+                    time.setText(listViewItem.getTimeText());
+                    time.setTextSize(20);
+                    todo.setTextSize(40);
+                }
+            }
         }
         return convertView;
     }
@@ -83,12 +119,13 @@ public class TodoListViewAdapter extends BaseAdapter {
     }
 
     // 아이템 데이터 추가를 위한 함수
-    public void addItem(String time, String timeText, String todo, String textColorCode, String backgroundColorCode) {
+    public void addItem(String time, String timeText, String todo, int importance, String textColorCode, String backgroundColorCode) {
         TodoItem item = new TodoItem();
 
         item.setTime(time);
         item.setTimeText(timeText);
         item.setTodo(todo);
+        item.setImportance(importance);
         item.setTextColorCode(textColorCode);
         item.setBackgroundColorCode(backgroundColorCode);
 
@@ -96,9 +133,21 @@ public class TodoListViewAdapter extends BaseAdapter {
     }
 
     // 아이템 데이터 업데이트를 위한 함수
-    public void updateItem(int index, String todo, String textColorCode, String backgroundColorCode) {
+    public void updateCustomItem(int index, String todo, String textColorCode, String backgroundColorCode) {
         listViewItemList.get(index).setTodo(todo);
         listViewItemList.get(index).setTextColorCode(textColorCode);
         listViewItemList.get(index).setBackgroundColorCode(backgroundColorCode);
+    }
+
+    // 아이템 데이터 업데이트를 위한 함수
+    public void updateThemeItem(int index, String todo, int importance) {
+        listViewItemList.get(index).setTodo(todo);
+        listViewItemList.get(index).setImportance(importance);
+    }
+
+    // 아이템 테마 변수 설정을 위한 함수
+    public void updateTheme(int theme, String[] importanceColors) {
+        this.theme = theme;
+        setImportanceColorCodes(importanceColors);
     }
 }

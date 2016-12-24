@@ -1,26 +1,32 @@
-package k.tomorrowdecision;
+package k.tomorrowdecision.ListViewAdapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 
-public class TextListViewAdapter extends BaseAdapter {
+import k.tomorrowdecision.Item.ThemeItem;
+import k.tomorrowdecision.R;
+import k.tomorrowdecision.Item.TextItem;
+
+public class ThemeListViewAdapter extends BaseAdapter {
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
-    private ArrayList<TextItem> listViewItemList = new ArrayList<TextItem>();
+    private ArrayList<ThemeItem> themeItemList = new ArrayList<ThemeItem>();
 
     // TextListViewAdapter 생성자
-    public TextListViewAdapter() {
+    public ThemeListViewAdapter() {
 
     }
 
     // Adapter에 사용되는 데이터의 개수를 리턴 : 필수 구현
     @Override
     public int getCount() {
-        return listViewItemList.size();
+        return themeItemList.size();
     }
 
     // position에 위치한 데이터를 화면에 출력하는데 사용될 View를 리턴 : 필수 구현
@@ -31,17 +37,25 @@ public class TextListViewAdapter extends BaseAdapter {
         // "todo_list_item" Layout을 inflate하여 convertView 참조 획득
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.text_list_item, parent, false);
+            convertView = inflater.inflate(R.layout.theme_list_item, parent, false);
         }
 
         // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
-        TextView todo = (TextView) convertView.findViewById(R.id.text_item);
+        TextView title = (TextView) convertView.findViewById(R.id.title);
+        TextView subTitle = (TextView) convertView.findViewById(R.id.sub_title);
+        ImageView usable = (ImageView) convertView.findViewById(R.id.usable);
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
-        TextItem listViewItem = listViewItemList.get(position);
+        ThemeItem themeItem = themeItemList.get(position);
 
         // 아이템 내 각 위젯에 데이터 반영
-        todo.setText(listViewItem.getTodo());
+        title.setText(themeItem.getTitle());
+        subTitle.setText(themeItem.getSubTitle());
+        if (themeItem.getUsable() == 1) {
+            usable.setVisibility(View.INVISIBLE);
+        } else {
+            usable.setVisibility(View.VISIBLE);
+        }
         return convertView;
     }
 
@@ -53,21 +67,24 @@ public class TextListViewAdapter extends BaseAdapter {
 
     // 지정한 위치(position)에 있는 데이터 리턴 : 필수 구현
     @Override
-    public TextItem getItem(int position) {
-        return listViewItemList.get(position);
+    public ThemeItem getItem(int position) {
+        return themeItemList.get(position);
     }
 
     // 아이템 데이터 추가를 위한 함수
-    public void addItem(long id, String todo) {
-        TextItem item = new TextItem();
+    public void addItem(long id, String title, String subTitle, String[] importanceColorCodes, int usable) {
+        ThemeItem item = new ThemeItem();
 
         item.setId(id);
-        item.setTodo(todo);
+        item.setTitle(title);
+        item.setSubTitle(subTitle);
+        item.setImportanceColorCodes(importanceColorCodes);
+        item.setUsable(usable);
 
-        listViewItemList.add(item);
+        themeItemList.add(item);
     }
 
-    public void removeItem(int index) {
-        listViewItemList.remove(listViewItemList.get(index));
+    public void beUsavleThemeItem(int index) {
+        themeItemList.get(index).setUsable(1);
     }
 }

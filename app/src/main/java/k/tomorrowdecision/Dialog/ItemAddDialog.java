@@ -1,4 +1,4 @@
-package k.tomorrowdecision;
+package k.tomorrowdecision.Dialog;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import k.tomorrowdecision.R;
 
 public class ItemAddDialog extends Dialog {
 

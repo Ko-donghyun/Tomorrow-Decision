@@ -1,4 +1,4 @@
-package k.tomorrowdecision;
+package k.tomorrowdecision.DataBase;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -1,4 +1,4 @@
-package k.tomorrowdecision;
+package k.tomorrowdecision.Dialog;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -12,6 +12,8 @@ import com.larswerkman.holocolorpicker.ColorPicker;
 import com.larswerkman.holocolorpicker.SVBar;
 import com.larswerkman.holocolorpicker.SaturationBar;
 import com.larswerkman.holocolorpicker.ValueBar;
+
+import k.tomorrowdecision.R;
 
 public class ColorPickerDialog extends Dialog {
 
