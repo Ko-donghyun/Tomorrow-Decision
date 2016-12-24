@@ -1,4 +1,4 @@
-package k.tomorrowdecision;
+package k.tomorrowdecision.ListViewAdapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import java.util.ArrayList;
+
+import k.tomorrowdecision.R;
+import k.tomorrowdecision.Item.TextItem;
 
 public class TextListViewAdapter extends BaseAdapter {
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
