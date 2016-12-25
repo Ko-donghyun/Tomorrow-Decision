@@ -20,7 +20,7 @@ public class LoadingActivity extends Activity {
 
     TodoDataBase todoDataBase;
     final String todoDBName = "Todo.db";
-    final int todoDBVersion = 2;
+    final int todoDBVersion = 3;
 
     public static SharedPreferences lastGetInTimePreference;
     public static SharedPreferences.Editor lastGetInTimeEditor;

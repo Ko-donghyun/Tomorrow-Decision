@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     // 할 일 디비
     TodoDataBase todoDataBase;
     final String todoDBName = "Todo.db";
-    final int todoDBVersion = 2;
+    final int todoDBVersion = 3;
     MemorizeDataBase memorizeDataBase;
     final String memorizeDBName = "memorize.db";
     final int memorizeDBVersion = 1;
