@@ -26,7 +26,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
     TodoDataBase todoDataBase;
     final String todoDBName = "Todo.db";
-    final int todoDBVersion = 2;
+    final int todoDBVersion = 3;
 
     public static SharedPreferences lastGetInTimePreference;
     public static SharedPreferences.Editor lastGetInTimeEditor;
@@ -129,6 +129,7 @@ public class WidgetProvider extends AppWidgetProvider {
                     // 마지막 실행 시간의 25시간 이후의 시간부터 지워진 시간만큼 생성해줘야 함
                     values.put("time", ((lastGetInTime / (3600000)) * 3600000) + (25 + i) * 3600000);
                     values.put("todo", "");
+                    values.put("importance", 0);
                     values.put("textColorCode", "#000000");
                     values.put("backgroundColorCode", "#FFFFFF");
                     todoDatabase.insert("todo", null, values);
@@ -145,6 +146,7 @@ public class WidgetProvider extends AppWidgetProvider {
                     // 현재 시간의 +25시간 이후 까지 생성
                     values.put("time", (((currentTime / 3600000) * 3600000)) - 86400000 + 3600000 * i);
                     values.put("todo", "");
+                    values.put("importance", 0);
                     values.put("textColorCode", "#000000");
                     values.put("backgroundColorCode", "#FFFFFF");
                     todoDatabase.insert("todo", null, values);
@@ -182,8 +184,9 @@ public class WidgetProvider extends AppWidgetProvider {
             item.setTime(cursor.getString(0));
             item.setTimeText(stringDate);
             item.setTodo(cursor.getString(1));
-            item.setTextColorCode(cursor.getString(2));
-            item.setBackgroundColorCode(cursor.getString(3));
+            item.setImportance(cursor.getInt(2));
+            item.setTextColorCode(cursor.getString(3));
+            item.setBackgroundColorCode(cursor.getString(4));
 
             listViewItemList.add(item);
         } while( cursor.moveToNext() );
