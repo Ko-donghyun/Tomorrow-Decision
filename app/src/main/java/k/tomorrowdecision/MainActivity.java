@@ -275,7 +275,8 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < 5; i++) {
                         importanceButtons[i].setBackgroundColor(Color.parseColor("#FFFFFF"));
                     }
-                    importanceButtons[todoListViewAdapter.getItem(position).getImportance()].setBackgroundColor(Color.parseColor("#EFEFEF"));
+                    importanceIndex = todoListViewAdapter.getItem(position).getImportance();
+                    importanceButtons[importanceIndex].setBackgroundColor(Color.parseColor("#EFEFEF"));
                     editItemViewFlipper.setDisplayedChild(1);
                 }
                 settingButton.setVisibility(View.INVISIBLE);
