@@ -702,6 +702,7 @@ public class MainActivity extends AppCompatActivity {
             timeZoneEditor = timeZonePreference.edit();
             timeZoneEditor.putInt("timeZone", myTimeZoneDialog.getNewTimeZone());
             timeZoneEditor.apply();
+            tracker.send(new HitBuilders.EventBuilder().setCategory("setting").setAction("Press Button").setLabel("Change TimeZone").build());
 
             myTimeZoneDialog.dismiss();
         }
