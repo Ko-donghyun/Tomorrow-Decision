@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import k.tomorrowdecision.R;
@@ -17,6 +18,8 @@ public class SettingDialog extends Dialog {
 
     private View.OnClickListener settingThemeClickListener;
     private View.OnClickListener okayClickListener;
+    private View.OnClickListener settingMyTimeZoneClickListener;
+    private int editableTime;
     private Context context;
 
     @Override
@@ -31,10 +34,15 @@ public class SettingDialog extends Dialog {
 
         setContentView(R.layout.setting_dialog);
 
+        TextView myEditableTime = (TextView) findViewById(R.id.my_editable_time);
+        myEditableTime.setText("(현재 " + Integer.toString(editableTime) + "시)");
+
         ImageView settingThemeButton = (ImageView) findViewById(R.id.setting_theme);
+        ImageView settingMyTimeZoneButton = (ImageView) findViewById(R.id.setting_my_time_zone);
         Button okayButton = (Button) findViewById(R.id.okay_button);
         SwitchCompat pushSwitch = (SwitchCompat) findViewById(R.id.push_switch);
 
+        settingMyTimeZoneButton.setOnClickListener(settingMyTimeZoneClickListener);
         settingThemeButton.setOnClickListener(settingThemeClickListener);
         okayButton.setOnClickListener(okayClickListener);
         pushSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -49,10 +57,12 @@ public class SettingDialog extends Dialog {
         });
     }
 
-    public SettingDialog(Context context, View.OnClickListener okayClickListener, View.OnClickListener settingThemeClickListener) {
+    public SettingDialog(Context context, View.OnClickListener okayClickListener, View.OnClickListener settingThemeClickListener, View.OnClickListener settingMyTimeZoneClickListener, int editableTime) {
         super(context, android.R.style.Theme_Translucent_NoTitleBar);
         this.context = context;
+        this.editableTime = editableTime;
         this.settingThemeClickListener = settingThemeClickListener;
+        this.settingMyTimeZoneClickListener = settingMyTimeZoneClickListener;
         this.okayClickListener = okayClickListener;
     }
 }

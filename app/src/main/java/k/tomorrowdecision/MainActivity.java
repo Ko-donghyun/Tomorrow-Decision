@@ -43,6 +43,7 @@ import k.tomorrowdecision.Dialog.ColorPickerDialog;
 import k.tomorrowdecision.Dialog.InformationDialog;
 import k.tomorrowdecision.Dialog.ItemAddDialog;
 import k.tomorrowdecision.Dialog.ItemDeleteDialog;
+import k.tomorrowdecision.Dialog.MyTimeZoneDialog;
 import k.tomorrowdecision.Dialog.SettingDialog;
 import k.tomorrowdecision.Dialog.ThemePickerDialog;
 import k.tomorrowdecision.Item.ThemeItem;
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ColorPickerDialog colorPickerDialog;
     ThemePickerDialog themePickerDialog;
+    MyTimeZoneDialog myTimeZoneDialog;
 
     private InformationDialog informationDialog;
 
@@ -138,6 +140,10 @@ public class MainActivity extends AppCompatActivity {
     public static SharedPreferences.Editor themeEditor;
     private int theme;
 
+    public static SharedPreferences timeZonePreference;
+    public static SharedPreferences.Editor timeZoneEditor;
+    private int timeZone;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,6 +155,9 @@ public class MainActivity extends AppCompatActivity {
 
         themePreference = getSharedPreferences("theme", Activity.MODE_PRIVATE);
         theme = themePreference.getInt("theme", 1);
+
+        timeZonePreference = getSharedPreferences("timeZone", Activity.MODE_PRIVATE);
+        timeZone = timeZonePreference.getInt("timeZone", 22);
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         tracker = application.getDefaultTracker();
@@ -200,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
         settingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                settingDialog = new SettingDialog(MainActivity.this, okayClickListener, settingThemeClickListener);
+                settingDialog = new SettingDialog(MainActivity.this, okayClickListener, settingThemeClickListener, settingMyTimeZoneClickListener, timeZone);
                 settingDialog.show();
             }
         });
@@ -224,11 +233,12 @@ public class MainActivity extends AppCompatActivity {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                timeZone = timeZonePreference.getInt("timeZone", 22);
 
                 SimpleDateFormat hourFormat = new SimpleDateFormat("HH", Locale.getDefault());
                 int hour = Integer.parseInt(hourFormat.format(new Date(System.currentTimeMillis())));
 
-                if (clickFlag && (hour < 2 || 18 <= hour) && mainViewFlipper.getDisplayedChild() == 1) {
+                if (clickFlag && isEditableTime(hour, timeZone) && mainViewFlipper.getDisplayedChild() == 1) {
                     clickFlag = false;
                     if (theme == 1) {
                         saveCustomTodo(itemPosition);
@@ -238,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
                     clickFlag = true;
                     settingButton.setVisibility(View.VISIBLE);
                 } else {
-                    informationDialog = new InformationDialog(MainActivity.this, dialogOkayClickListener);
+                    informationDialog = new InformationDialog(MainActivity.this, dialogOkayClickListener, getEditableTimeRange(timeZone));
                     informationDialog.show();
                 }
             }
@@ -263,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
                 timeText = todoListViewAdapter.getItem(position).getTime();
                 itemPosition = position;
 
-                themePreference = getSharedPreferences("theme", Activity.MODE_PRIVATE);
                 theme = themePreference.getInt("theme", 1);
                 if (theme == 1) {
                     todoBackground.setBackgroundColor(Color.parseColor(todoListViewAdapter.getItem(position).getBackgroundColorCode()));
@@ -682,6 +691,31 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private View.OnClickListener myTimeZoneCloseClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            myTimeZoneDialog.dismiss();
+        }
+    };
+
+    private View.OnClickListener myTimeZoneApplyClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            timeZoneEditor = timeZonePreference.edit();
+            timeZoneEditor.putInt("timeZone", myTimeZoneDialog.getNewTimeZone());
+            timeZoneEditor.apply();
+
+            myTimeZoneDialog.dismiss();
+        }
+    };
+
+    private View.OnClickListener settingMyTimeZoneClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            settingDialog.dismiss();
+            timeZone = timeZonePreference.getInt("timeZone", 22);
+            myTimeZoneDialog = new MyTimeZoneDialog(MainActivity.this, myTimeZoneCloseClickListener, myTimeZoneApplyClickListener, timeZone);
+            myTimeZoneDialog.show();
+        }
+    };
+
     TextView.OnClickListener itemAddClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             String title = "";
@@ -702,6 +736,18 @@ public class MainActivity extends AppCompatActivity {
             itemAddDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     };
+
+    private boolean isEditableTime(int currentHour, int timeZone) {
+        if (((timeZone + 21) % 24) > ((timeZone + 3) % 24)) {
+            return (((timeZone + 21) % 24) <= currentHour || ((timeZone + 3) % 24) > currentHour);
+        } else {
+            return (((timeZone + 21) % 24) <= currentHour && ((timeZone + 3) % 24) > currentHour);
+        }
+    }
+
+    private String getEditableTimeRange(int timeZone) {
+        return Integer.toString((timeZone + 21) % 24) + ":00 ~ " + Integer.toString((timeZone + 3) % 24) + ":00";
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
