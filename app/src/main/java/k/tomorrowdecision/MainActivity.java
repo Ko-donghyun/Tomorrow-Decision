@@ -49,6 +49,7 @@ import k.tomorrowdecision.Dialog.ThemePickerDialog;
 import k.tomorrowdecision.Item.ThemeItem;
 import k.tomorrowdecision.ListViewAdapter.TextListViewAdapter;
 import k.tomorrowdecision.ListViewAdapter.TodoListViewAdapter;
+import k.tomorrowdecision.Widget.WidgetProvider;
 
 public class MainActivity extends AppCompatActivity {
     InputMethodManager imm;

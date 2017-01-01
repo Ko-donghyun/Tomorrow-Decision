@@ -1,4 +1,4 @@
-package k.tomorrowdecision;
+package k.tomorrowdecision.Widget;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -21,6 +21,8 @@ import java.util.Locale;
 
 import k.tomorrowdecision.DataBase.TodoDataBase;
 import k.tomorrowdecision.Item.TodoItem;
+import k.tomorrowdecision.LoadingActivity;
+import k.tomorrowdecision.R;
 
 public class WidgetProvider extends AppWidgetProvider {
 
