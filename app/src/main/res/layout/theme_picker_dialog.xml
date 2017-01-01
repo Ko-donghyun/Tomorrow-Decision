@@ -232,15 +232,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#000000"
-                            android:textSize="15dp"
-                            android:textStyle="bold"
+                            android:textSize="14dp"
                             android:text="기존 테마 : "/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#000000"
-                            android:textSize="15dp"
-                            android:textStyle="bold"
+                            android:textSize="14dp"
                             android:text="커스텀"
                             android:id="@+id/pre_theme"/>
 
@@ -255,16 +253,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#2d2d2d"
-                            android:textSize="15dp"
-                            android:textStyle="bold"
+                            android:textSize="14dp"
                             android:text="선택한 테마 : "/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#2d2d2d"
-                            android:textSize="15dp"
-                            android:textStyle="bold"
-                            android:text="커스텀"
+                            android:textSize="14dp"
+                            android:text="커스텀 테마"
                             android:id="@+id/new_theme"/>
 
                     </LinearLayout>
@@ -280,6 +276,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:paddingRight="3dp"
                     android:orientation="horizontal">
 
                     <ListView
