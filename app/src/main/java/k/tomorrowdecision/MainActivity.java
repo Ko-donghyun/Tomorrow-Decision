@@ -49,6 +49,7 @@ import k.tomorrowdecision.Dialog.ThemePickerDialog;
 import k.tomorrowdecision.Item.ThemeItem;
 import k.tomorrowdecision.ListViewAdapter.TextListViewAdapter;
 import k.tomorrowdecision.ListViewAdapter.TodoListViewAdapter;
+import k.tomorrowdecision.Widget.ThemeWidgetProvider;
 import k.tomorrowdecision.Widget.WidgetProvider;
 
 public class MainActivity extends AppCompatActivity {
@@ -776,6 +777,8 @@ public class MainActivity extends AppCompatActivity {
                     if ( 0 <= intervalTime && FINISH_INTERVAL_TIME >= intervalTime ) {
                         WidgetProvider widgetProvider = new WidgetProvider();
                         widgetProvider.updateWidget(MainActivity.this);
+                        ThemeWidgetProvider themeWidgetProvider = new ThemeWidgetProvider();
+                        themeWidgetProvider.updateWidget(MainActivity.this);
                         super.onBackPressed();
                     }
                     else {
