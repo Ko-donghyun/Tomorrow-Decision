@@ -88,32 +88,27 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:background="#f1f1f1"
-                android:text=""/>
 
             <Button
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
-                android:text="확인"
+                android:text="닫기"
                 android:id="@+id/dialog_okay"/>
 
-            <TextView
+            <Button
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:background="#f1f1f1"
-                android:text=""/>
+                android:textSize="16dp"
+                android:text="바로 설정하기"
+                android:id="@+id/direct_setting_my_time_zone"/>
 
         </LinearLayout>
 
