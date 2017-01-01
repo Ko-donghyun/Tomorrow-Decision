@@ -13,6 +13,7 @@ import k.tomorrowdecision.R;
 public class InformationDialog extends Dialog {
 
     private View.OnClickListener okayClickListener;
+    private View.OnClickListener directSettingMyTimeZoneClickListener;
     private String editableTimeRange;
 
     @Override
@@ -29,13 +30,18 @@ public class InformationDialog extends Dialog {
         TextView editableTime = (TextView) findViewById(R.id.editable_time);
         editableTime.setText(editableTimeRange);
 
-        Button cancelButton = (Button) findViewById(R.id.dialog_okay);
-        cancelButton.setOnClickListener(okayClickListener);
+        Button closeButton = (Button) findViewById(R.id.dialog_okay);
+        closeButton.setOnClickListener(okayClickListener);
+
+        Button settingMyTimeZoneButton = (Button) findViewById(R.id.direct_setting_my_time_zone);
+        settingMyTimeZoneButton.setOnClickListener(directSettingMyTimeZoneClickListener);
     }
 
-    public InformationDialog(Context context, View.OnClickListener okayClickListener, String editableTimeRange) {
+    public InformationDialog(Context context, View.OnClickListener okayClickListener,
+                             View.OnClickListener directSettingMyTimeZoneClickListener, String editableTimeRange) {
         super(context, android.R.style.Theme_Translucent_NoTitleBar);
         this.okayClickListener = okayClickListener;
+        this.directSettingMyTimeZoneClickListener = directSettingMyTimeZoneClickListener;
         this.editableTimeRange = editableTimeRange;
     }
 
