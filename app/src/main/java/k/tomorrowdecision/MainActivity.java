@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
                     clickFlag = true;
                     settingButton.setVisibility(View.VISIBLE);
                 } else {
-                    informationDialog = new InformationDialog(MainActivity.this, dialogOkayClickListener, getEditableTimeRange(timeZone));
+                    informationDialog = new InformationDialog(MainActivity.this, dialogOkayClickListener, directSettingMyTimeZoneClickListener, getEditableTimeRange(timeZone));
                     informationDialog.show();
                 }
             }
@@ -602,6 +602,14 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private View.OnClickListener directSettingMyTimeZoneClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            informationDialog.dismiss();
+            timeZone = timeZonePreference.getInt("timeZone", 22);
+            myTimeZoneDialog = new MyTimeZoneDialog(MainActivity.this, myTimeZoneCloseClickListener, myTimeZoneApplyClickListener, timeZone);
+            myTimeZoneDialog.show();
+        }
+    };
 
     private View.OnClickListener dialogDeleteDoneClickListener = new View.OnClickListener() {
         public void onClick(View v) {
