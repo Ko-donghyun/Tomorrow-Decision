@@ -142,6 +142,10 @@ public class MainActivity extends AppCompatActivity {
     public static SharedPreferences.Editor themeEditor;
     private int theme;
 
+    public static SharedPreferences listViewThemePreference;
+    public static SharedPreferences.Editor listViewThemeEditor;
+    private String listViewTheme;
+
     public static SharedPreferences timeZonePreference;
     public static SharedPreferences.Editor timeZoneEditor;
     private int timeZone;
@@ -157,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
 
         themePreference = getSharedPreferences("theme", Activity.MODE_PRIVATE);
         theme = themePreference.getInt("theme", 1);
+
+        listViewThemePreference = getSharedPreferences("listViewTheme", Activity.MODE_PRIVATE);
+        listViewTheme = listViewThemePreference.getString("listViewTheme", "normal");
 
         timeZonePreference = getSharedPreferences("timeZone", Activity.MODE_PRIVATE);
         timeZone = timeZonePreference.getInt("timeZone", 22);
@@ -200,7 +207,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Adapter 생성
-        todoListViewAdapter = new TodoListViewAdapter(theme, importanceColorCodeArray);
+        int listViewLayout = settingListViewLayout();
+        todoListViewAdapter = new TodoListViewAdapter(getApplicationContext(), listViewLayout, theme, importanceColorCodeArray);
+
         memorizeListViewAdapter = new TextListViewAdapter();
         mustDoListViewAdapter = new TextListViewAdapter();
         getTodoData();
@@ -383,6 +392,23 @@ public class MainActivity extends AppCompatActivity {
         Intent restartIntent = new Intent(MainActivity.this, LoadingActivity.class);
         startActivity(restartIntent);
         finish();
+    }
+
+    private int settingListViewLayout() {
+        int listViewLayout;
+        switch (listViewTheme) {
+            case "padding":
+                listViewLayout = R.layout.todo_list_item_padding;
+                break;
+            case "round":
+                listViewLayout = R.layout.todo_list_item_round;
+                break;
+            default:
+                listViewLayout = R.layout.todo_list_item;
+                listViewLayout = R.layout.todo_list_item_round;
+                break;
+        }
+        return listViewLayout;
     }
 
     private void getTodoData() {
