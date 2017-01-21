@@ -43,6 +43,7 @@ import k.tomorrowdecision.Dialog.ColorPickerDialog;
 import k.tomorrowdecision.Dialog.InformationDialog;
 import k.tomorrowdecision.Dialog.ItemAddDialog;
 import k.tomorrowdecision.Dialog.ItemDeleteDialog;
+import k.tomorrowdecision.Dialog.ListViewThemePickerDialog;
 import k.tomorrowdecision.Dialog.MyTimeZoneDialog;
 import k.tomorrowdecision.Dialog.SettingDialog;
 import k.tomorrowdecision.Dialog.ThemePickerDialog;
@@ -130,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
     private ColorPickerDialog colorPickerDialog;
     ThemePickerDialog themePickerDialog;
     MyTimeZoneDialog myTimeZoneDialog;
+    ListViewThemePickerDialog listViewThemePickerDialog;
 
     private InformationDialog informationDialog;
 
@@ -145,6 +147,11 @@ public class MainActivity extends AppCompatActivity {
     public static SharedPreferences listViewThemePreference;
     public static SharedPreferences.Editor listViewThemeEditor;
     private String listViewTheme;
+
+    public static SharedPreferences listViewThemeBackgroundColorPreference;
+    public static SharedPreferences.Editor listViewThemeBackgroundColorEditor;
+    String listViewThemeBackgroundColor;
+    LinearLayout listViewBackground;
 
     public static SharedPreferences timeZonePreference;
     public static SharedPreferences.Editor timeZoneEditor;
@@ -164,6 +171,12 @@ public class MainActivity extends AppCompatActivity {
 
         listViewThemePreference = getSharedPreferences("listViewTheme", Activity.MODE_PRIVATE);
         listViewTheme = listViewThemePreference.getString("listViewTheme", "normal");
+
+        listViewThemeBackgroundColorPreference = getSharedPreferences("listViewThemeBackgroundColor", Activity.MODE_PRIVATE);
+        listViewThemeBackgroundColor = listViewThemeBackgroundColorPreference.getString("listViewThemeBackgroundColor", "#e9e9e9");
+
+        listViewBackground = (LinearLayout) findViewById(R.id.todo_list_background);
+        listViewBackground.setBackgroundColor(Color.parseColor(listViewThemeBackgroundColor));
 
         timeZonePreference = getSharedPreferences("timeZone", Activity.MODE_PRIVATE);
         timeZone = timeZonePreference.getInt("timeZone", 22);
@@ -220,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
         settingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                settingDialog = new SettingDialog(MainActivity.this, okayClickListener, settingThemeClickListener, settingMyTimeZoneClickListener, timeZone);
+                settingDialog = new SettingDialog(MainActivity.this, okayClickListener, settingThemeClickListener, settingListViewThemeClickListener, settingMyTimeZoneClickListener, timeZone);
                 settingDialog.show();
             }
         });
@@ -405,7 +418,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             default:
                 listViewLayout = R.layout.todo_list_item;
-                listViewLayout = R.layout.todo_list_item_round;
                 break;
         }
         return listViewLayout;
@@ -675,6 +687,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
     private View.OnClickListener okayClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             settingDialog.dismiss();
@@ -686,6 +699,43 @@ public class MainActivity extends AppCompatActivity {
             themePickerDialog.dismiss();
         }
     };
+
+    private View.OnClickListener listViewThemeCloseClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            listViewThemePickerDialog.dismiss();
+        }
+    };
+
+
+    private View.OnClickListener listViewThemeApplyClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+
+            listViewThemeBackgroundColor = listViewThemePickerDialog.getListViewThemeBackgroundColor();
+
+            listViewThemeBackgroundColorEditor = listViewThemeBackgroundColorPreference.edit();
+            listViewThemeBackgroundColorEditor.putString("listViewThemeBackgroundColor", listViewThemeBackgroundColor);
+            listViewThemeBackgroundColorEditor.apply();
+
+            listViewTheme = listViewThemePickerDialog.getListViewLayoutTheme();
+            listViewThemeEditor = listViewThemePreference.edit();
+            listViewThemeEditor.putString("listViewTheme", listViewTheme);
+            listViewThemeEditor.apply();
+
+            int listViewLayout = settingListViewLayout();
+            todoListViewAdapter.updateListViewLayout(listViewLayout);
+
+//            todoListViewAdapter = new TodoListViewAdapter(getApplicationContext(), listViewLayout, theme, importanceColorCodeArray);
+            todoListView.setAdapter(todoListViewAdapter);
+            todoListView.setSelection(21);
+//            todoListViewAdapter.notifyDataSetChanged();
+
+            listViewBackground.setBackgroundColor(Color.parseColor(listViewThemeBackgroundColor));
+
+            listViewThemePickerDialog.dismiss();
+        }
+    };
+
+
 
     private View.OnClickListener themeApplyClickListener = new View.OnClickListener() {
         public void onClick(View v) {
@@ -724,6 +774,14 @@ public class MainActivity extends AppCompatActivity {
             settingDialog.dismiss();
             themePickerDialog = new ThemePickerDialog(MainActivity.this, themeCloseClickListener, themeApplyClickListener);
             themePickerDialog.show();
+        }
+    };
+
+    private View.OnClickListener settingListViewThemeClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            settingDialog.dismiss();
+            listViewThemePickerDialog = new ListViewThemePickerDialog(MainActivity.this, listViewTheme, listViewThemeBackgroundColor, listViewThemeCloseClickListener, listViewThemeApplyClickListener);
+            listViewThemePickerDialog.show();
         }
     };
 
