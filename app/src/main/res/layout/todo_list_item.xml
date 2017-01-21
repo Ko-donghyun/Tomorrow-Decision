@@ -7,13 +7,12 @@
     android:background="#ffffff"
     android:id="@+id/item_layout">
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:orientation="vertical"
         android:layout_weight="0"
-        android:background="#dcdcdc"/>
-
+        android:id="@+id/line_text"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
