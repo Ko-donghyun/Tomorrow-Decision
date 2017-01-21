@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24dp"
+            android:textSize="22dp"
             android:id="@+id/dialog_title"
             android:text="설정"
             android:padding="10dp"
@@ -42,44 +42,59 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
+                android:orientation="vertical"
+                android:id="@+id/setting_theme"
+                >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16dp"
                     android:text="○ 테마 설정"
-                    android:padding="10dp"
+                    android:padding="7dp"
                     android:textColor="#545659"/>
 
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="5dp"
-                    android:layout_marginRight="10dp"
-                    android:gravity="right|center_vertical">
-
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:padding="2dp"
-                        android:background="@drawable/gears2"
-                        android:textColor="#8a8d92"
-                        android:id="@+id/setting_theme"/>
-
-                </LinearLayout>
-
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:text=" - TODO 리스트의 할 일 테마 설정하기"
+                    android:paddingLeft="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#8a8d92"/>
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="0"
+                android:background="#dcdcdc"/>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12dp"
-                android:text=" - TODO 리스트의 할 일 테마 설정하기"
-                android:paddingLeft="10dp"
-                android:layout_marginBottom="10dp"
-                android:textColor="#8a8d92"/>
+                android:orientation="vertical"
+                android:id="@+id/setting_layout_theme"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:text="○ 리스트 형태 설정"
+                    android:padding="7dp"
+                    android:textColor="#545659"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:text=" - TODO 리스트의 형태 설정하기"
+                    android:paddingLeft="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#8a8d92"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -101,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16dp"
                     android:text="○ 푸시 알림 설정"
-                    android:padding="10dp"
+                    android:padding="7dp"
                     android:textColor="#545659"/>
 
                 <LinearLayout
@@ -151,58 +166,48 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="○ 오늘밤 시간대 설정"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:textColor="#545659"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12dp"
-                    android:text="(현재 22시)"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:textColor="#545659"
-                    android:id="@+id/my_editable_time"/>
+                android:orientation="vertical"
+                android:id="@+id/setting_my_time_zone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="5dp"
-                    android:layout_marginRight="10dp"
-                    android:gravity="right|center_vertical">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:padding="2dp"
-                        android:background="@drawable/gears2"
-                        android:textColor="#8a8d92"
-                        android:id="@+id/setting_my_time_zone"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16dp"
+                        android:text="○ 오늘밤 시간대 설정"
+                        android:paddingLeft="7dp"
+                        android:paddingTop="7dp"
+                        android:paddingBottom="7dp"
+                        android:textColor="#545659"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12dp"
+                        android:text="(현재 22시)"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:textColor="#545659"
+                        android:id="@+id/my_editable_time"/>
 
                 </LinearLayout>
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:text=" - 나만의 오늘밤 시간대 설정하기"
+                    android:layout_marginBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:textColor="#8a8d92"/>
+
             </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="12dp"
-                android:text=" - 나만의 오늘밤 시간대 설정하기"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:textColor="#8a8d92"/>
-
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
