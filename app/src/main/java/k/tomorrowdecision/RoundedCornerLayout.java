@@ -12,7 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 public class RoundedCornerLayout extends LinearLayout {
-    private final static float CORNER_RADIUS = 20.0f;
+    private final static float CORNER_RADIUS = 8.0f;
     private static Canvas offscreenCanvas;
     private static Bitmap offscreenBitmap;
 
