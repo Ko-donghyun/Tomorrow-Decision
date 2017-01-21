@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ public class SettingDialog extends Dialog {
     private View.OnClickListener settingThemeClickListener;
     private View.OnClickListener okayClickListener;
     private View.OnClickListener settingMyTimeZoneClickListener;
+    private View.OnClickListener settingListViewThemeClickListener;
     private int editableTime;
     private Context context;
 
@@ -37,13 +39,15 @@ public class SettingDialog extends Dialog {
         TextView myEditableTime = (TextView) findViewById(R.id.my_editable_time);
         myEditableTime.setText("(현재 " + Integer.toString(editableTime) + "시)");
 
-        ImageView settingThemeButton = (ImageView) findViewById(R.id.setting_theme);
-        ImageView settingMyTimeZoneButton = (ImageView) findViewById(R.id.setting_my_time_zone);
+        LinearLayout settingTheme = (LinearLayout) findViewById(R.id.setting_theme);
+        LinearLayout settingListViewTheme = (LinearLayout) findViewById(R.id.setting_layout_theme);
+        LinearLayout settingMyTimeZone = (LinearLayout) findViewById(R.id.setting_my_time_zone);
         Button okayButton = (Button) findViewById(R.id.okay_button);
         SwitchCompat pushSwitch = (SwitchCompat) findViewById(R.id.push_switch);
 
-        settingMyTimeZoneButton.setOnClickListener(settingMyTimeZoneClickListener);
-        settingThemeButton.setOnClickListener(settingThemeClickListener);
+        settingMyTimeZone.setOnClickListener(settingMyTimeZoneClickListener);
+        settingTheme.setOnClickListener(settingThemeClickListener);
+        settingListViewTheme.setOnClickListener(settingListViewThemeClickListener);
         okayButton.setOnClickListener(okayClickListener);
         pushSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -57,11 +61,13 @@ public class SettingDialog extends Dialog {
         });
     }
 
-    public SettingDialog(Context context, View.OnClickListener okayClickListener, View.OnClickListener settingThemeClickListener, View.OnClickListener settingMyTimeZoneClickListener, int editableTime) {
+    public SettingDialog(Context context, View.OnClickListener okayClickListener, View.OnClickListener settingThemeClickListener,
+                         View.OnClickListener settingListViewThemeClickListener, View.OnClickListener settingMyTimeZoneClickListener, int editableTime) {
         super(context, android.R.style.Theme_Translucent_NoTitleBar);
         this.context = context;
         this.editableTime = editableTime;
         this.settingThemeClickListener = settingThemeClickListener;
+        this.settingListViewThemeClickListener = settingListViewThemeClickListener;
         this.settingMyTimeZoneClickListener = settingMyTimeZoneClickListener;
         this.okayClickListener = okayClickListener;
     }

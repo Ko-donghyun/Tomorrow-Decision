@@ -20,12 +20,19 @@ public class TodoListViewAdapter extends BaseAdapter {
     private int theme;
     private String[] importanceColorCodes = new String[10];
 
+    private Context mContext;
+    private LayoutInflater mInflater;
+    private int mLayout;
+
     // TodoListViewAdapter의 생성자
     public TodoListViewAdapter() {
 
     }
 
-    public TodoListViewAdapter(int theme, String[] importanceColors) {
+    public TodoListViewAdapter(Context context, int layout, int theme, String[] importanceColors) {
+        this.mContext = context;
+        this.mLayout = layout;
+        this.mInflater = (LayoutInflater) context.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
         updateTheme(theme, importanceColors);
     }
 
@@ -50,60 +57,73 @@ public class TodoListViewAdapter extends BaseAdapter {
     // position에 위치한 데이터를 화면에 출력하는데 사용될 View를 리턴 : 필수 구현
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final Context context = parent.getContext();
 
-        // "todo_list_item" Layout을 inflate하여 convertView 참조 획득
-        if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.todo_list_item, parent, false);
+        View view = convertView;
+        ViewHolder viewHolder = null;
+        // 캐시된 뷰가 없을 경우 새로 생성하고 뷰홀더를 생성한다
+        if (view == null) {
+            view = mInflater.inflate(mLayout, parent, false);
+
+            viewHolder = new ViewHolder();
+            viewHolder.itemLayout = (LinearLayout) view.findViewById(R.id.item_layout);
+            viewHolder.time = (TextView) view.findViewById(R.id.time_text);
+            viewHolder.todo = (TextView) view.findViewById(R.id.todo_item);
+            viewHolder.lineText = (TextView) view.findViewById(R.id.line_text);
+
+            view.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) view.getTag();
         }
-
-        // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
-        TextView time = (TextView) convertView.findViewById(R.id.time_text);
-        TextView todo = (TextView) convertView.findViewById(R.id.todo_item);
-        LinearLayout itemLayout = (LinearLayout) convertView.findViewById(R.id.item_layout);
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         TodoItem listViewItem = listViewItemList.get(position);
 
         // 아이템 내 각 위젯에 데이터 반영
-        time.setText(listViewItem.getTimeText().substring(12, 15));
-        todo.setText(listViewItem.getTodo());
-        time.setTextSize(14);
-        todo.setTextSize(20);
+
+        viewHolder.todo.setText(listViewItem.getTodo());
+        viewHolder.todo.setTextSize(16);
+        viewHolder.time.setText(listViewItem.getTimeText().substring(12, 15));
+        if (mLayout == R.layout.todo_list_item_round) {
+            viewHolder.time.setTextSize(20);
+        } else {
+            viewHolder.time.setTextSize(14);
+        }
+
+        // 캐시된 뷰가 있을 경우 저장된 뷰홀더를 사용한다
 
         if (theme == 1) {
             if (position < 24) {
-                todo.setTextColor(Color.parseColor("#9A9A9A"));
-                time.setTextColor(Color.parseColor("#9A9A9A"));
-                itemLayout.setBackgroundColor(Color.parseColor("#D4D4D4"));
+                viewHolder.todo.setTextColor(Color.parseColor("#9A9A9A"));
+                viewHolder.time.setTextColor(Color.parseColor("#9A9A9A"));
+                viewHolder.itemLayout.setBackgroundColor(Color.parseColor("#D4D4D4"));
+                viewHolder.lineText.setBackgroundColor(Color.parseColor("#9A9A9A"));
             } else {
-                todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
-                time.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
-                itemLayout.setBackgroundColor(Color.parseColor(listViewItem.getBackgroundColorCode()));
-            }
-            if (position == 24) {
-                time.setText(listViewItem.getTimeText());
-                time.setTextSize(20);
-                todo.setTextSize(40);
+                viewHolder.todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
+                viewHolder.time.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
+                viewHolder.itemLayout.setBackgroundColor(Color.parseColor(listViewItem.getBackgroundColorCode()));
+                viewHolder.lineText.setBackgroundColor(Color.parseColor(listViewItem.getTextColorCode()));
+                if (position == 24) {
+                    // 현재 시간 위치
+                }
             }
         } else {
             if (position < 24) {
-                todo.setTextColor(Color.parseColor("#9A9A9A"));
-                time.setTextColor(Color.parseColor("#9A9A9A"));
-                itemLayout.setBackgroundColor(Color.parseColor("#D4D4D4"));
+                viewHolder.todo.setTextColor(Color.parseColor("#9A9A9A"));
+                viewHolder.time.setTextColor(Color.parseColor("#9A9A9A"));
+                viewHolder.itemLayout.setBackgroundColor(Color.parseColor("#D4D4D4"));
+                viewHolder.lineText.setBackgroundColor(Color.parseColor("#9A9A9A"));
             } else {
-                todo.setTextColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2)]));
-                time.setTextColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2)]));
-                itemLayout.setBackgroundColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2) + 1]));
+                viewHolder.todo.setTextColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2)]));
+                viewHolder.time.setTextColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2)]));
+                viewHolder.itemLayout.setBackgroundColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2) + 1]));
+                viewHolder.lineText.setBackgroundColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2)]));
                 if (position == 24) {
-                    time.setText(listViewItem.getTimeText());
-                    time.setTextSize(20);
-                    todo.setTextSize(40);
+                    // 현재 시간 위치
                 }
             }
         }
-        return convertView;
+
+        return view;
     }
 
     // 지정한 위치(position)에 있는 데이터와 관계된 아이템(row)의 ID를 리턴 : 필수 구현
@@ -149,5 +169,17 @@ public class TodoListViewAdapter extends BaseAdapter {
     public void updateTheme(int theme, String[] importanceColors) {
         this.theme = theme;
         setImportanceColorCodes(importanceColors);
+    }
+
+    // 아이템 테마 변수 설정을 위한 함수
+    public void updateListViewLayout(int layout) {
+        this.mLayout = layout;
+    }
+
+    public static class ViewHolder {
+        public LinearLayout itemLayout;
+        public TextView todo;
+        public TextView time;
+        public TextView lineText;
     }
 }
