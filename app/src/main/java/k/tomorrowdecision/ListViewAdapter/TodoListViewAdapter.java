@@ -68,9 +68,7 @@ public class TodoListViewAdapter extends BaseAdapter {
             viewHolder.itemLayout = (LinearLayout) view.findViewById(R.id.item_layout);
             viewHolder.time = (TextView) view.findViewById(R.id.time_text);
             viewHolder.todo = (TextView) view.findViewById(R.id.todo_item);
-
-            if (mLayout == R.layout.todo_list_item_round)
-                viewHolder.lineText = (TextView) view.findViewById(R.id.line_text);
+            viewHolder.lineText = (TextView) view.findViewById(R.id.line_text);
 
             view.setTag(viewHolder);
         } else {
@@ -98,14 +96,12 @@ public class TodoListViewAdapter extends BaseAdapter {
                 viewHolder.todo.setTextColor(Color.parseColor("#9A9A9A"));
                 viewHolder.time.setTextColor(Color.parseColor("#9A9A9A"));
                 viewHolder.itemLayout.setBackgroundColor(Color.parseColor("#D4D4D4"));
-                if (mLayout == R.layout.todo_list_item_round)
-                    viewHolder.lineText.setBackgroundColor(Color.parseColor("#9A9A9A"));
+                viewHolder.lineText.setBackgroundColor(Color.parseColor("#9A9A9A"));
             } else {
                 viewHolder.todo.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
                 viewHolder.time.setTextColor(Color.parseColor(listViewItem.getTextColorCode()));
                 viewHolder.itemLayout.setBackgroundColor(Color.parseColor(listViewItem.getBackgroundColorCode()));
-                if (mLayout == R.layout.todo_list_item_round)
-                    viewHolder.lineText.setBackgroundColor(Color.parseColor(listViewItem.getTextColorCode()));
+                viewHolder.lineText.setBackgroundColor(Color.parseColor(listViewItem.getTextColorCode()));
                 if (position == 24) {
                     // 현재 시간 위치
                 }
@@ -115,14 +111,12 @@ public class TodoListViewAdapter extends BaseAdapter {
                 viewHolder.todo.setTextColor(Color.parseColor("#9A9A9A"));
                 viewHolder.time.setTextColor(Color.parseColor("#9A9A9A"));
                 viewHolder.itemLayout.setBackgroundColor(Color.parseColor("#D4D4D4"));
-                if (mLayout == R.layout.todo_list_item_round)
-                    viewHolder.lineText.setBackgroundColor(Color.parseColor("#9A9A9A"));
+                viewHolder.lineText.setBackgroundColor(Color.parseColor("#9A9A9A"));
             } else {
                 viewHolder.todo.setTextColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2)]));
                 viewHolder.time.setTextColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2)]));
                 viewHolder.itemLayout.setBackgroundColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2) + 1]));
-                if (mLayout == R.layout.todo_list_item_round)
-                    viewHolder.lineText.setBackgroundColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2)]));
+                viewHolder.lineText.setBackgroundColor(Color.parseColor(importanceColorCodes[(listViewItem.getImportance() * 2)]));
                 if (position == 24) {
                     // 현재 시간 위치
                 }
@@ -175,6 +169,11 @@ public class TodoListViewAdapter extends BaseAdapter {
     public void updateTheme(int theme, String[] importanceColors) {
         this.theme = theme;
         setImportanceColorCodes(importanceColors);
+    }
+
+    // 아이템 테마 변수 설정을 위한 함수
+    public void updateListViewLayout(int layout) {
+        this.mLayout = layout;
     }
 
     public static class ViewHolder {
