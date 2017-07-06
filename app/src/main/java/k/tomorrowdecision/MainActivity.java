@@ -1,6 +1,12 @@
 package k.tomorrowdecision;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+
+import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +26,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,6 +40,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -157,6 +165,11 @@ public class MainActivity extends AppCompatActivity {
     public static SharedPreferences.Editor timeZoneEditor;
     private int timeZone;
 
+    public static SharedPreferences alarmPreference;
+    public static SharedPreferences.Editor alarmEditor;
+    private boolean alarm;
+    MyAlarmManager myAlarmManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,6 +193,10 @@ public class MainActivity extends AppCompatActivity {
 
         timeZonePreference = getSharedPreferences("timeZone", Activity.MODE_PRIVATE);
         timeZone = timeZonePreference.getInt("timeZone", 22);
+
+        alarmPreference = getSharedPreferences("alarm", Activity.MODE_PRIVATE);
+        alarm = alarmPreference.getBoolean("alarm", false);
+        myAlarmManager = new MyAlarmManager(getApplicationContext());
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         tracker = application.getDefaultTracker();
@@ -233,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
         settingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                settingDialog = new SettingDialog(MainActivity.this, okayClickListener, settingThemeClickListener, settingListViewThemeClickListener, settingMyTimeZoneClickListener, timeZone);
+                settingDialog = new SettingDialog(MainActivity.this, okayClickListener, settingThemeClickListener, settingListViewThemeClickListener, settingMyTimeZoneClickListener, timeZone, settingAlarmClickListener, alarm);
                 settingDialog.show();
             }
         });
@@ -269,6 +286,8 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         saveImportanceTodo(itemPosition);
                     }
+                    myAlarmManager.Alarm(timeText, todoListViewAdapter.getItem(itemPosition).getTimeText(), todoListViewAdapter.getItem(itemPosition).getTodo());
+
                     clickFlag = true;
                     settingButton.setVisibility(View.VISIBLE);
                 } else {
@@ -385,6 +404,7 @@ public class MainActivity extends AppCompatActivity {
                 tracker.send(new HitBuilders.EventBuilder().setCategory("EditPage").setAction("Press Button").setLabel("text Color Choice Click").build());
             }
         });
+
     }
 
     @Override
@@ -811,6 +831,26 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private CompoundButton.OnCheckedChangeListener settingAlarmClickListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                Toast.makeText(MainActivity.this, "지금부터 설정한 일정에 대해서 푸시가 등록됩니다.", Toast.LENGTH_SHORT).show();
+                alarmEditor = alarmPreference.edit();
+                alarmEditor.putBoolean("alarm", true);
+                alarmEditor.apply();
+                alarm = true;
+            } else {
+                Toast.makeText(MainActivity.this, "모든 일정이 해제되었습니다.", Toast.LENGTH_SHORT).show();
+                alarmEditor = alarmPreference.edit();
+                alarmEditor.putBoolean("alarm", false);
+                alarmEditor.apply();
+                alarm = false;
+                myAlarmManager.AllAlarmCancel();
+            }
+        }
+    };
+
     TextView.OnClickListener itemAddClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             String title = "";
@@ -883,5 +923,55 @@ public class MainActivity extends AppCompatActivity {
 
     private void showKeyboard(View view) {
         imm.showSoftInput(view, 0);
+    }
+
+
+    public class MyAlarmManager {
+        private Context context;
+        PendingIntent[] sender = new PendingIntent[49];
+
+        public MyAlarmManager(Context context) {
+            this.context=context;
+        }
+        public void Alarm(String timeStamp, String timeText, String content) {
+            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+            Long alarmTime = Long.parseLong(timeStamp);
+            int notifyId = (int) (alarmTime / 3600000);
+            int index = notifyId % 49;
+
+            Intent intent = new Intent("k.tomorrowdecision.ALARM_START");
+            intent.putExtra("timeText", timeText);
+            intent.putExtra("index", index);
+            intent.putExtra("content", content);
+
+            System.out.println(index);
+
+            sender[index] = PendingIntent.getBroadcast(getApplicationContext(), index, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Calendar mCalendar = Calendar.getInstance();
+            mCalendar.setTimeInMillis(alarmTime);
+//            mCalendar.setTimeInMillis(System.currentTimeMillis());
+            mCalendar.add(Calendar.SECOND, 30);
+
+            if (System.currentTimeMillis() > alarmTime || content.equals("") || !alarm) {
+                // 알람 취소
+                System.out.println("알람 취소");
+                am.cancel(sender[index]);
+            } else {
+                //알람 예약
+                System.out.println("알람 예약");
+                am.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender[index]);
+            }
+        }
+        public void AllAlarmCancel() {
+            Intent intent = new Intent("k.tomorrowdecision.ALARM_START");
+
+            for (int i = 0; i < 49; i++) {
+                AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                sender[i] = PendingIntent.getBroadcast(getApplicationContext(), i, intent, 0);
+                am.cancel(sender[i]);
+            }
+        }
     }
 }
