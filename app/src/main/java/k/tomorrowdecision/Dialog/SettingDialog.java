@@ -21,7 +21,9 @@ public class SettingDialog extends Dialog {
     private View.OnClickListener okayClickListener;
     private View.OnClickListener settingMyTimeZoneClickListener;
     private View.OnClickListener settingListViewThemeClickListener;
+    private CompoundButton.OnCheckedChangeListener settingAlarmClickListener;
     private int editableTime;
+    private boolean alarm;
     private Context context;
 
     @Override
@@ -44,31 +46,26 @@ public class SettingDialog extends Dialog {
         LinearLayout settingMyTimeZone = (LinearLayout) findViewById(R.id.setting_my_time_zone);
         Button okayButton = (Button) findViewById(R.id.okay_button);
         SwitchCompat pushSwitch = (SwitchCompat) findViewById(R.id.push_switch);
+        pushSwitch.setChecked(alarm);
 
         settingMyTimeZone.setOnClickListener(settingMyTimeZoneClickListener);
         settingTheme.setOnClickListener(settingThemeClickListener);
         settingListViewTheme.setOnClickListener(settingListViewThemeClickListener);
         okayButton.setOnClickListener(okayClickListener);
-        pushSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-//                    Toast.makeText(context, Boolean.toString(isChecked), Toast.LENGTH_SHORT).show();
-                } else {
-//                    Toast.makeText(context, Boolean.toString(isChecked), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        pushSwitch.setOnCheckedChangeListener(settingAlarmClickListener);
     }
 
     public SettingDialog(Context context, View.OnClickListener okayClickListener, View.OnClickListener settingThemeClickListener,
-                         View.OnClickListener settingListViewThemeClickListener, View.OnClickListener settingMyTimeZoneClickListener, int editableTime) {
+                         View.OnClickListener settingListViewThemeClickListener, View.OnClickListener settingMyTimeZoneClickListener, int editableTime,
+                         CompoundButton.OnCheckedChangeListener settingAlarmClickListener, boolean alarm) {
         super(context, android.R.style.Theme_Translucent_NoTitleBar);
         this.context = context;
         this.editableTime = editableTime;
+        this.alarm = alarm;
         this.settingThemeClickListener = settingThemeClickListener;
         this.settingListViewThemeClickListener = settingListViewThemeClickListener;
         this.settingMyTimeZoneClickListener = settingMyTimeZoneClickListener;
+        this.settingAlarmClickListener = settingAlarmClickListener;
         this.okayClickListener = okayClickListener;
     }
 }
