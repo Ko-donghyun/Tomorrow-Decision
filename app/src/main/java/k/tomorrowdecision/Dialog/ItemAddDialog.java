@@ -62,4 +62,7 @@ public class ItemAddDialog extends Dialog {
     public String getItem() {
         return itemEditText.getText().toString();
     }
+    public void setEditTextViewItem(String text) {
+        itemEditText.setText(text);
+    }
 }

@@ -311,31 +311,44 @@ public class MainActivity extends AppCompatActivity {
         todoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                todoTime.setText(todoListViewAdapter.getItem(position).getTimeText());
-                todo.setText(todoListViewAdapter.getItem(position).getTodo());
-                timeText = todoListViewAdapter.getItem(position).getTime();
-                itemPosition = position;
+                if (position <= 23) {
+                    if (!todoListViewAdapter.getItem(position).getTodo().equals("")) {
+                        String title = "Must Do";
+                        String subTitle = "지난 일에 대해서 꼭 해야만 하는 일로 추가됩니다.";
 
-                theme = themePreference.getInt("theme", 1);
-                if (theme == 1) {
-                    todoBackground.setBackgroundColor(Color.parseColor(todoListViewAdapter.getItem(position).getBackgroundColorCode()));
-                    todo.setTextColor(Color.parseColor(todoListViewAdapter.getItem(position).getTextColorCode()));
-                    editItemViewFlipper.setDisplayedChild(0);
-                } else {
-                    todoBackground.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                    todo.setTextColor(Color.parseColor("#000000"));
-                    for (int i = 0; i < 5; i++) {
-                        importanceButtons[i].setBackgroundColor(Color.parseColor("#FFFFFF"));
+                        itemAddDialogSwitch = title;
+                        itemAddDialog = new ItemAddDialog(MainActivity.this, title, subTitle, dialogCancelClickListener, dialogDoneClickListener);
+                        itemAddDialog.show();
+                        itemAddDialog.setEditTextViewItem(todoListViewAdapter.getItem(position).getTodo());
+                        itemAddDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                     }
-                    importanceIndex = todoListViewAdapter.getItem(position).getImportance();
-                    importanceButtons[importanceIndex].setBackgroundColor(Color.parseColor("#EFEFEF"));
-                    editItemViewFlipper.setDisplayedChild(1);
+                } else {
+                    todoTime.setText(todoListViewAdapter.getItem(position).getTimeText());
+                    todo.setText(todoListViewAdapter.getItem(position).getTodo());
+                    timeText = todoListViewAdapter.getItem(position).getTime();
+                    itemPosition = position;
+
+                    theme = themePreference.getInt("theme", 1);
+                    if (theme == 1) {
+                        todoBackground.setBackgroundColor(Color.parseColor(todoListViewAdapter.getItem(position).getBackgroundColorCode()));
+                        todo.setTextColor(Color.parseColor(todoListViewAdapter.getItem(position).getTextColorCode()));
+                        editItemViewFlipper.setDisplayedChild(0);
+                    } else {
+                        todoBackground.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                        todo.setTextColor(Color.parseColor("#000000"));
+                        for (int i = 0; i < 5; i++) {
+                            importanceButtons[i].setBackgroundColor(Color.parseColor("#FFFFFF"));
+                        }
+                        importanceIndex = todoListViewAdapter.getItem(position).getImportance();
+                        importanceButtons[importanceIndex].setBackgroundColor(Color.parseColor("#EFEFEF"));
+                        editItemViewFlipper.setDisplayedChild(1);
+                    }
+                    settingButton.setVisibility(View.INVISIBLE);
+                    mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_in));
+                    mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_out));
+                    mainViewFlipper.showNext();
+                    tracker.send(new HitBuilders.EventBuilder().setCategory("EditPage").setAction("Press Button").setLabel("Move EditPage").build());
                 }
-                settingButton.setVisibility(View.INVISIBLE);
-                mainViewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_in));
-                mainViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.push_left_out));
-                mainViewFlipper.showNext();
-                tracker.send(new HitBuilders.EventBuilder().setCategory("EditPage").setAction("Press Button").setLabel("Move EditPage").build());
             }
         });
         todoListView.setSelection(21);
