@@ -154,15 +154,6 @@
                 android:textColor="#8a8d92"
                 android:textSize="12dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:paddingLeft="10dp"
-                android:text=" - 단 연속 일정일 경우 최초 일정만 알람이 됩니다"
-                android:textColor="#8a8d92"
-                android:textSize="12dp" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

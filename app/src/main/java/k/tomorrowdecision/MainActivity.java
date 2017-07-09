@@ -977,7 +977,6 @@ public class MainActivity extends AppCompatActivity {
         imm.showSoftInput(view, 0);
     }
 
-
     public class MyAlarmManager {
         private Context context;
         PendingIntent[] sender = new PendingIntent[49];
@@ -987,46 +986,16 @@ public class MainActivity extends AppCompatActivity {
         }
         public void Alarm(String timeStamp, String timeText, String content, int itemPosition) {
             AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-            Long alarmTime = Long.parseLong(timeStamp);
-            int notifyId = (int) (alarmTime / 3600000);
-            int index = notifyId % 49;
-
-            Intent intent = new Intent("k.tomorrowdecision.ALARM_START");
-            intent.putExtra("timeText", timeText);
-            intent.putExtra("index", index);
-            intent.putExtra("content", content);
-
-            sender[index] = PendingIntent.getBroadcast(getApplicationContext(), index, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
             Calendar mCalendar = Calendar.getInstance();
-            mCalendar.setTimeInMillis(alarmTime);
-//            mCalendar.setTimeInMillis(System.currentTimeMillis());
-            mCalendar.add(Calendar.SECOND, 30);
+            Intent intent;
+            Long alarmTime;
+            int notifyId;
+            int index;
 
-
-            if (System.currentTimeMillis() > alarmTime || content.equals("") || !alarm) {
-                // 알람 취소
-                System.out.println("알람 취소");
-                am.cancel(sender[index]);
-            } else {
+            if (alarm) {
                 //알람 예약
-                System.out.println("알람 예약");
-
-                if (successiveNumber > 1) {
-                    for (int i = 0; i < successiveNumber; i++) {
-
-                        System.out.println("기존 알람들 취소 : " + (index + i) % 49);
-                        am.cancel(sender[(index + i) % 49]);
-                    }
-                }
-                System.out.println("새로운 알람 설정 : " + index);
-                am.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender[index]);
-
-                int nextPosition = itemPosition + successiveNumber;
-                if (successiveNumber > 1 && nextPosition < 49 && !todoListViewAdapter.getItem(nextPosition).getTodo().equals("")) {
-
-                    alarmTime = Long.parseLong(todoListViewAdapter.getItem(nextPosition).getTime());
+                for (int i = 0; i < successiveNumber; i++) {
+                    alarmTime = Long.parseLong(todoListViewAdapter.getItem(itemPosition + i).getTime());
                     notifyId = (int) (alarmTime / 3600000);
                     index = notifyId % 49;
 
@@ -1037,12 +1006,15 @@ public class MainActivity extends AppCompatActivity {
 
                     sender[index] = PendingIntent.getBroadcast(getApplicationContext(), index, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                    mCalendar = Calendar.getInstance();
                     mCalendar.setTimeInMillis(alarmTime);
-                    mCalendar.add(Calendar.SECOND, 30);
 
-                    System.out.println("밀린 알람 설정 : " + index);
-                    am.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender[index]);
+                    if (System.currentTimeMillis() > alarmTime || content.equals("")) {
+                        System.out.println("알람 취소 : " + index);
+                        am.cancel(sender[index]);
+                    } else {
+                        System.out.println("알람 예약 : " + index);
+                        am.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender[index]);
+                    }
                 }
             }
         }
