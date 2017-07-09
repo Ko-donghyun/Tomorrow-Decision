@@ -95,6 +95,10 @@ public class MainActivity extends AppCompatActivity {
     private final long FINISH_INTERVAL_TIME = 1000;
     private long backPressedTime = 0;
 
+    TextView successiveTodo;
+    TextView successiveNumberTextView;
+    int successiveNumber;
+
     TextView todoTime;
     EditText todo;
     LinearLayout todoBackground;
@@ -282,11 +286,15 @@ public class MainActivity extends AppCompatActivity {
                 if (clickFlag && isEditableTime(hour, timeZone) && mainViewFlipper.getDisplayedChild() == 1) {
                     clickFlag = false;
                     if (theme == 1) {
-                        saveCustomTodo(itemPosition);
+
+                        saveCustomTodo(itemPosition, timeText, successiveNumber);
+
                     } else {
-                        saveImportanceTodo(itemPosition);
+
+                        saveImportanceTodo(itemPosition, timeText, successiveNumber);
+
                     }
-                    myAlarmManager.Alarm(timeText, todoListViewAdapter.getItem(itemPosition).getTimeText(), todoListViewAdapter.getItem(itemPosition).getTodo());
+                    myAlarmManager.Alarm(timeText, todoListViewAdapter.getItem(itemPosition).getTimeText(), todoListViewAdapter.getItem(itemPosition).getTodo(), itemPosition);
 
                     clickFlag = true;
                     settingButton.setVisibility(View.VISIBLE);
@@ -297,7 +305,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        successiveTodo = (TextView) findViewById(R.id.successive_todo);
+        successiveNumberTextView = (TextView) findViewById(R.id.successive_number);
         todoTime = (TextView) findViewById(R.id.todo_time);
         todo = (EditText) findViewById(R.id.todo_item);
         todoBackground = (LinearLayout) findViewById(R.id.todo_background);
@@ -323,6 +332,9 @@ public class MainActivity extends AppCompatActivity {
                         itemAddDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                     }
                 } else {
+                    successiveNumberTextView.setText("+1");
+                    successiveNumber = 1;
+
                     todoTime.setText(todoListViewAdapter.getItem(position).getTimeText());
                     todo.setText(todoListViewAdapter.getItem(position).getTodo());
                     timeText = todoListViewAdapter.getItem(position).getTime();
@@ -418,6 +430,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        successiveTodo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                successiveNumber++;
+                if (successiveNumber > 9) {
+                    successiveNumber = 1;
+                }
+                successiveNumberTextView.setText("+" + successiveNumber);
+            }
+        });
     }
 
     @Override
@@ -502,7 +525,9 @@ public class MainActivity extends AppCompatActivity {
         sqLiteDatabase.close();
     }
 
-    private void saveCustomTodo(int itemPosition) {
+    private void saveCustomTodo(int itemPosition, String timeText, int successiveNumber) {
+        Long time = Long.parseLong(timeText);
+
         SQLiteDatabase todoDatabase = todoDataBase.getWritableDatabase();
 
         int backgroundColor = Color.TRANSPARENT;
@@ -518,11 +543,17 @@ public class MainActivity extends AppCompatActivity {
         values.put("todo", todo.getText().toString());
         values.put("textColorCode", textHexCode);
         values.put("backgroundColorCode", backgroundHexCode);
-        todoDatabase.update("todo", values, "time='" + timeText + "'", null);
-
+        for (int i = 0; i < successiveNumber; i++) {
+            timeText = time.toString();
+            todoDatabase.update("todo", values, "time='" + timeText + "'", null);
+            todoListViewAdapter.updateCustomItem(itemPosition, todo.getText().toString(), textHexCode, backgroundHexCode);
+            itemPosition++;
+            time = time + 3600000;
+            if (itemPosition >= 49) {
+                break;
+            }
+        }
         todoDatabase.close();
-
-        todoListViewAdapter.updateCustomItem(itemPosition, todo.getText().toString(), textHexCode, backgroundHexCode);
         todoListViewAdapter.notifyDataSetChanged();
         hideKeyboard(todo);
 
@@ -532,18 +563,26 @@ public class MainActivity extends AppCompatActivity {
         tracker.send(new HitBuilders.EventBuilder().setCategory("EditPage").setAction("Press Button").setLabel("saveCustomTodo").build());
     }
 
-    private void saveImportanceTodo(int itemPosition) {
+    private void saveImportanceTodo(int itemPosition, String timeText, int successiveNumber) {
+        Long time = Long.parseLong(timeText);
+
         SQLiteDatabase todoDatabase = todoDataBase.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
         values.put("todo", todo.getText().toString());
         values.put("importance", importanceIndex);
-        todoDatabase.update("todo", values, "time='" + timeText + "'", null);
-
+        for (int i = 0; i < successiveNumber; i++) {
+            timeText = time.toString();
+            todoDatabase.update("todo", values, "time='" + timeText + "'", null);
+            todoListViewAdapter.updateThemeItem(itemPosition, todo.getText().toString(), importanceIndex);
+            itemPosition++;
+            time = time + 3600000;
+            if (itemPosition >= 49) {
+                break;
+            }
+        }
         todoDatabase.close();
-
-        todoListViewAdapter.updateThemeItem(itemPosition, todo.getText().toString(), importanceIndex);
         todoListViewAdapter.notifyDataSetChanged();
         hideKeyboard(todo);
 
@@ -946,7 +985,7 @@ public class MainActivity extends AppCompatActivity {
         public MyAlarmManager(Context context) {
             this.context=context;
         }
-        public void Alarm(String timeStamp, String timeText, String content) {
+        public void Alarm(String timeStamp, String timeText, String content, int itemPosition) {
             AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
             Long alarmTime = Long.parseLong(timeStamp);
@@ -958,14 +997,13 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("index", index);
             intent.putExtra("content", content);
 
-            System.out.println(index);
-
             sender[index] = PendingIntent.getBroadcast(getApplicationContext(), index, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             Calendar mCalendar = Calendar.getInstance();
             mCalendar.setTimeInMillis(alarmTime);
 //            mCalendar.setTimeInMillis(System.currentTimeMillis());
             mCalendar.add(Calendar.SECOND, 30);
+
 
             if (System.currentTimeMillis() > alarmTime || content.equals("") || !alarm) {
                 // 알람 취소
@@ -974,7 +1012,38 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 //알람 예약
                 System.out.println("알람 예약");
+
+                if (successiveNumber > 1) {
+                    for (int i = 0; i < successiveNumber; i++) {
+
+                        System.out.println("기존 알람들 취소 : " + (index + i) % 49);
+                        am.cancel(sender[(index + i) % 49]);
+                    }
+                }
+                System.out.println("새로운 알람 설정 : " + index);
                 am.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender[index]);
+
+                int nextPosition = itemPosition + successiveNumber;
+                if (successiveNumber > 1 && nextPosition < 49 && !todoListViewAdapter.getItem(nextPosition).getTodo().equals("")) {
+
+                    alarmTime = Long.parseLong(todoListViewAdapter.getItem(nextPosition).getTime());
+                    notifyId = (int) (alarmTime / 3600000);
+                    index = notifyId % 49;
+
+                    intent = new Intent("k.tomorrowdecision.ALARM_START");
+                    intent.putExtra("timeText", timeText);
+                    intent.putExtra("index", index);
+                    intent.putExtra("content", content);
+
+                    sender[index] = PendingIntent.getBroadcast(getApplicationContext(), index, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    mCalendar = Calendar.getInstance();
+                    mCalendar.setTimeInMillis(alarmTime);
+                    mCalendar.add(Calendar.SECOND, 30);
+
+                    System.out.println("밀린 알람 설정 : " + index);
+                    am.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender[index]);
+                }
             }
         }
         public void AllAlarmCancel() {
