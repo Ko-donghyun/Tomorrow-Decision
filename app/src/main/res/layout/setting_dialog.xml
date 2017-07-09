@@ -8,30 +8,30 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:background="#f1f1f1"
         android:gravity="center"
-        android:background="#f1f1f1">
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/dialog_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="22dp"
-            android:id="@+id/dialog_title"
-            android:text="설정"
-            android:padding="10dp"
             android:gravity="center"
-            android:textColor="#000000"/>
+            android:padding="10dp"
+            android:text="설정"
+            android:textColor="#000000"
+            android:textSize="22dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
-            android:orientation="vertical"
-            android:background="#dcdcdc"/>
+            android:layout_marginRight="10dp"
+            android:background="#dcdcdc"
+            android:orientation="vertical" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,98 +40,98 @@
             android:paddingLeft="10dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:id="@+id/setting_theme"
-                >
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16dp"
+                    android:padding="7dp"
                     android:text="○ 테마 설정"
-                    android:padding="7dp"
-                    android:textColor="#545659"/>
+                    android:textColor="#545659"
+                    android:textSize="16dp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="12dp"
+                    android:layout_marginBottom="10dp"
+                    android:paddingLeft="10dp"
                     android:text=" - TODO 리스트의 할 일 테마 설정하기"
-                    android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textColor="#8a8d92"/>
+                    android:textColor="#8a8d92"
+                    android:textSize="12dp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:orientation="vertical"
-                android:layout_marginRight="20dp"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
                 android:layout_weight="0"
-                android:background="#dcdcdc"/>
+                android:background="#dcdcdc"
+                android:orientation="vertical" />
 
             <LinearLayout
+                android:id="@+id/setting_layout_theme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/setting_layout_theme"
-                >
+                android:orientation="vertical">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="○ 리스트 형태 설정"
                     android:padding="7dp"
-                    android:textColor="#545659"/>
+                    android:text="○ 리스트 형태 설정"
+                    android:textColor="#545659"
+                    android:textSize="16dp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="12dp"
-                    android:text=" - TODO 리스트의 형태 설정하기"
-                    android:paddingLeft="10dp"
                     android:layout_marginBottom="10dp"
-                    android:textColor="#8a8d92"/>
+                    android:paddingLeft="10dp"
+                    android:text=" - TODO 리스트의 형태 설정하기"
+                    android:textColor="#8a8d92"
+                    android:textSize="12dp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:orientation="vertical"
-                android:layout_marginRight="20dp"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
                 android:layout_weight="0"
-                android:background="#dcdcdc"/>
+                android:background="#dcdcdc"
+                android:orientation="vertical" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="○ 푸시 알림 설정"
                     android:padding="7dp"
-                    android:textColor="#545659"/>
+                    android:text="○ 푸시 알림 설정"
+                    android:textColor="#545659"
+                    android:textSize="16dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="5dp"
                     android:layout_marginRight="10dp"
-                    android:gravity="right|center_vertical">
+                    android:gravity="right|center_vertical"
+                    android:padding="5dp">
 
                     <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/push_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="0dp"
-                        android:text=""
-                        android:id="@+id/push_switch"/>
+                        android:text="" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -139,35 +139,44 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12dp"
-                android:text=" - 미래 일정에 대한 푸시 알림"
                 android:layout_marginBottom="10dp"
                 android:paddingLeft="10dp"
-                android:textColor="#8a8d92"/>
+                android:text=" - 미래 일정에 대한 푸시 알림"
+                android:textColor="#8a8d92"
+                android:textSize="12dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12dp"
-                android:text=" - 해제 시 모든 알람 해제"
                 android:layout_marginBottom="10dp"
                 android:paddingLeft="10dp"
-                android:textColor="#8a8d92"/>
+                android:text=" - 해제 시 모든 알람 해제"
+                android:textColor="#8a8d92"
+                android:textSize="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:paddingLeft="10dp"
+                android:text=" - 단 연속 일정일 경우 최초 일정만 알람이 됩니다"
+                android:textColor="#8a8d92"
+                android:textSize="12dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:orientation="vertical"
-                android:layout_weight="0"
-                android:layout_marginRight="20dp"
                 android:layout_marginLeft="10dp"
-                android:background="#dcdcdc"/>
+                android:layout_marginRight="20dp"
+                android:layout_weight="0"
+                android:background="#dcdcdc"
+                android:orientation="vertical" />
 
             <LinearLayout
+                android:id="@+id/setting_my_time_zone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/setting_my_time_zone">
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -177,74 +186,75 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16dp"
-                        android:text="○ 오늘밤 시간대 설정"
+                        android:paddingBottom="7dp"
                         android:paddingLeft="7dp"
                         android:paddingTop="7dp"
-                        android:paddingBottom="7dp"
-                        android:textColor="#545659"/>
+                        android:text="○ 오늘밤 시간대 설정"
+                        android:textColor="#545659"
+                        android:textSize="16dp" />
 
                     <TextView
+                        android:id="@+id/my_editable_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="12dp"
-                        android:text="(현재 22시)"
-                        android:paddingTop="10dp"
                         android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:text="(현재 22시)"
                         android:textColor="#545659"
-                        android:id="@+id/my_editable_time"/>
+                        android:textSize="12dp" />
 
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="12dp"
-                    android:text=" - 나만의 오늘밤 시간대 설정하기"
                     android:layout_marginBottom="10dp"
                     android:paddingLeft="10dp"
-                    android:textColor="#8a8d92"/>
+                    android:text=" - 나만의 오늘밤 시간대 설정하기"
+                    android:textColor="#8a8d92"
+                    android:textSize="12dp" />
 
             </LinearLayout>
 
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:orientation="vertical"
-            android:layout_weight="0"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:background="#dcdcdc"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_height="1dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="0"
+            android:background="#dcdcdc"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="#f1f1f1"
-                android:text=""/>
+                android:text="" />
 
             <Button
+                android:id="@+id/okay_button"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:textSize="16dp"
+                android:layout_weight="1"
                 android:text="닫기"
-                android:id="@+id/okay_button"/>
+                android:textSize="16dp" />
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="#f1f1f1"
-                android:text=""/>
+                android:text="" />
 
         </LinearLayout>
 
