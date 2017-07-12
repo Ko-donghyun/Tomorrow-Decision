@@ -30,18 +30,13 @@ public class AlarmReceiver extends BroadcastReceiver {
             sCpuWakeLock = null;
         }
 
-        NotificationManager notificationmanager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification.Builder builder = new Notification.Builder(context);
+        Intent mServiceIntent = new Intent(context, AlarmService.class);
 
-        System.out.println(intent.getStringExtra("content"));
-        System.out.println(intent.getStringExtra("timeText"));
-        System.out.println(intent.getIntExtra("index", 1));
+        mServiceIntent.putExtra("timeText", intent.getStringExtra("timeText"));
+        mServiceIntent.putExtra("index", intent.getIntExtra("index", 1));
+        mServiceIntent.putExtra("content", intent.getStringExtra("content"));
 
-        builder.setSmallIcon(R.drawable.i).setTicker("지금은...")
-                .setContentTitle(intent.getStringExtra("content")).setContentText(intent.getStringExtra("timeText"))
-                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE).setAutoCancel(true);
-
-        notificationmanager.notify(intent.getIntExtra("index", 1), builder.build());
+        context.startService(mServiceIntent);
     }
 
 }
