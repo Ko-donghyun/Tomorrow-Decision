@@ -997,10 +997,11 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < successiveNumber; i++) {
                     alarmTime = Long.parseLong(todoListViewAdapter.getItem(itemPosition + i).getTime());
                     notifyId = (int) (alarmTime / 3600000);
+                    System.out.println("알람 : " + alarmTime);
                     index = notifyId % 49;
 
                     intent = new Intent("k.tomorrowdecision.ALARM_START");
-                    intent.putExtra("timeText", timeText);
+                    intent.putExtra("timeText", todoListViewAdapter.getItem(itemPosition + i).getTimeText());
                     intent.putExtra("index", index);
                     intent.putExtra("content", content);
 
@@ -1013,7 +1014,12 @@ public class MainActivity extends AppCompatActivity {
                         am.cancel(sender[index]);
                     } else {
                         System.out.println("알람 예약 : " + index);
-                        am.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender[index]);
+
+                        if (Build.VERSION.SDK_INT >= 19) {
+                            am.setExact(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender[index]);
+                        } else {
+                            am.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender[index]);
+                        }
                     }
                 }
             }
